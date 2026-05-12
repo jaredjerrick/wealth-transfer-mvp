@@ -1,0 +1,14 @@
+Metadata-Version: 2.4
+Name: wealth-transfer-engine
+Version: 0.1.0
+Summary: Deterministic, citation-traced wealth-transfer strategy comparison engine.
+Requires-Python: >=3.10
+Requires-Dist: pydantic<3,>=2.5
+Requires-Dist: fastapi<1,>=0.110
+Requires-Dist: uvicorn[standard]<1,>=0.27
+Requires-Dist: reportlab<5,>=4.0
+Requires-Dist: httpx<1,>=0.27
+Provides-Extra: dev
+Requires-Dist: pytest<9,>=8; extra == "dev"
+Requires-Dist: pytest-asyncio<1,>=0.23; extra == "dev"
+Requires-Dist: ruff<1,>=0.4; extra == "dev"

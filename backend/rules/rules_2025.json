@@ -1,0 +1,482 @@
+{
+  "tax_year": 2025,
+  "last_updated": "2026-05-12",
+  "source": "IRS Rev. Proc. 2024-40 (federal indexed amounts); state DOR sites for state parameters",
+  "notes": "TCJA estate/gift exemption remains active in 2026 per legislative continuation. No sunset modeled. All values are final published amounts.",
+
+  "federal": {
+    "gift_tax": {
+      "annual_exclusion_per_donee": {
+        "value": 19000,
+        "citation": "IRC §2503(b); Rev. Proc. 2024-40 §3.43",
+        "description": "Annual gift tax exclusion per donee for 2025."
+      },
+      "gift_splitting": {
+        "available": true,
+        "citation": "IRC §2513",
+        "description": "Spouses may elect to split gifts, doubling the effective annual exclusion."
+      },
+      "five_year_election_529": {
+        "multiplier": 5,
+        "citation": "IRC §529(c)(2)(B)",
+        "description": "Donor may elect to treat a 529 contribution as made ratably over 5 years."
+      },
+      "marital_deduction_unlimited": {
+        "available": true,
+        "citation": "IRC §2523",
+        "description": "Unlimited gift tax marital deduction for transfers to U.S.-citizen spouse."
+      },
+      "lifetime_exemption_basic_exclusion": {
+        "value": 13990000,
+        "citation": "IRC §2010(c); Rev. Proc. 2024-40 §3.41",
+        "description": "Basic exclusion amount for gift and estate tax (2025)."
+      }
+    },
+
+    "estate_tax": {
+      "basic_exclusion_amount": {
+        "value": 13990000,
+        "citation": "IRC §2010(c); Rev. Proc. 2024-40 §3.41",
+        "description": "Unified credit shelter amount for 2025."
+      },
+      "portability_dsue": {
+        "available": true,
+        "citation": "IRC §2010(c)(2)(B), (c)(4); Form 706",
+        "description": "Deceased spousal unused exclusion portable to surviving spouse via timely 706 filing."
+      },
+      "marital_deduction": {
+        "citation": "IRC §2056",
+        "description": "Unlimited estate tax marital deduction for transfers to U.S.-citizen surviving spouse."
+      },
+      "charitable_deduction": {
+        "citation": "IRC §2055",
+        "description": "Unlimited estate tax deduction for transfers to qualified charities."
+      },
+      "administration_debts_deduction": {
+        "citation": "IRC §2053",
+        "description": "Deduction for funeral expenses, administration costs, claims, and debts of decedent."
+      },
+      "rate_schedule": {
+        "citation": "IRC §2001(c)",
+        "brackets": [
+          {"floor": 0,        "ceiling": 10000,     "rate": 0.18, "base_tax": 0},
+          {"floor": 10000,    "ceiling": 20000,     "rate": 0.20, "base_tax": 1800},
+          {"floor": 20000,    "ceiling": 40000,     "rate": 0.22, "base_tax": 3800},
+          {"floor": 40000,    "ceiling": 60000,     "rate": 0.24, "base_tax": 8200},
+          {"floor": 60000,    "ceiling": 80000,     "rate": 0.26, "base_tax": 13000},
+          {"floor": 80000,    "ceiling": 100000,    "rate": 0.28, "base_tax": 18200},
+          {"floor": 100000,   "ceiling": 150000,    "rate": 0.30, "base_tax": 23800},
+          {"floor": 150000,   "ceiling": 250000,    "rate": 0.32, "base_tax": 38800},
+          {"floor": 250000,   "ceiling": 500000,    "rate": 0.34, "base_tax": 70800},
+          {"floor": 500000,   "ceiling": 750000,    "rate": 0.37, "base_tax": 155800},
+          {"floor": 750000,   "ceiling": 1000000,   "rate": 0.39, "base_tax": 248300},
+          {"floor": 1000000,  "ceiling": null,      "rate": 0.40, "base_tax": 345800}
+        ],
+        "description": "Federal unified estate/gift transfer tax rate schedule. Top marginal rate 40% above $1M of taxable transfers (effectively above the exemption)."
+      },
+      "step_up_in_basis": {
+        "citation": "IRC §1014",
+        "description": "Property acquired from a decedent takes a basis equal to fair market value at date of death (or alternate valuation date)."
+      },
+      "community_property_double_step_up": {
+        "citation": "IRC §1014(b)(6)",
+        "description": "In community property states, both halves of community property receive a step-up at the death of the first spouse.",
+        "applies_to_states": ["TX"]
+      },
+      "ird_no_step_up": {
+        "citation": "IRC §691; IRS Pub 559",
+        "description": "Items of income in respect of a decedent (e.g., traditional IRA, deferred comp) do not receive §1014 step-up."
+      },
+      "qdot_non_citizen_spouse": {
+        "citation": "IRC §2056A",
+        "description": "Qualified Domestic Trust required for marital deduction when surviving spouse is non-U.S. citizen. Out of MVP scope; schema reserved."
+      }
+    },
+
+    "gst_tax": {
+      "exemption": {
+        "value": 13990000,
+        "citation": "IRC §2631; Rev. Proc. 2024-40",
+        "description": "GST exemption equal to estate/gift basic exclusion for 2025."
+      },
+      "rate": {
+        "value": 0.40,
+        "citation": "IRC §2641(a)",
+        "description": "Maximum federal estate tax rate applied to taxable generation-skipping transfers."
+      },
+      "skip_person_definition": {
+        "citation": "IRC §2613",
+        "description": "A skip person is a beneficiary two or more generations below the transferor (e.g., grandchildren)."
+      }
+    },
+
+    "income_tax_2025_ordinary": {
+      "citation": "IRC §1; Rev. Proc. 2024-40 §3.01",
+      "single": [
+        {"floor": 0,       "ceiling": 11925,    "rate": 0.10, "base_tax": 0},
+        {"floor": 11925,   "ceiling": 48475,    "rate": 0.12, "base_tax": 1192.50},
+        {"floor": 48475,   "ceiling": 103350,   "rate": 0.22, "base_tax": 5578.50},
+        {"floor": 103350,  "ceiling": 197300,   "rate": 0.24, "base_tax": 17651.00},
+        {"floor": 197300,  "ceiling": 250525,   "rate": 0.32, "base_tax": 40199.00},
+        {"floor": 250525,  "ceiling": 626350,   "rate": 0.35, "base_tax": 57231.00},
+        {"floor": 626350,  "ceiling": null,     "rate": 0.37, "base_tax": 188769.75}
+      ],
+      "mfj": [
+        {"floor": 0,       "ceiling": 23850,    "rate": 0.10, "base_tax": 0},
+        {"floor": 23850,   "ceiling": 96950,    "rate": 0.12, "base_tax": 2385.00},
+        {"floor": 96950,   "ceiling": 206700,   "rate": 0.22, "base_tax": 11157.00},
+        {"floor": 206700,  "ceiling": 394600,   "rate": 0.24, "base_tax": 35302.00},
+        {"floor": 394600,  "ceiling": 501050,   "rate": 0.32, "base_tax": 80398.00},
+        {"floor": 501050,  "ceiling": 751600,   "rate": 0.35, "base_tax": 114462.00},
+        {"floor": 751600,  "ceiling": null,     "rate": 0.37, "base_tax": 202154.50}
+      ],
+      "mfs": [
+        {"floor": 0,       "ceiling": 11925,    "rate": 0.10, "base_tax": 0},
+        {"floor": 11925,   "ceiling": 48475,    "rate": 0.12, "base_tax": 1192.50},
+        {"floor": 48475,   "ceiling": 103350,   "rate": 0.22, "base_tax": 5578.50},
+        {"floor": 103350,  "ceiling": 197300,   "rate": 0.24, "base_tax": 17651.00},
+        {"floor": 197300,  "ceiling": 250525,   "rate": 0.32, "base_tax": 40199.00},
+        {"floor": 250525,  "ceiling": 375800,   "rate": 0.35, "base_tax": 57231.00},
+        {"floor": 375800,  "ceiling": null,     "rate": 0.37, "base_tax": 101077.25}
+      ],
+      "hoh": [
+        {"floor": 0,       "ceiling": 17000,    "rate": 0.10, "base_tax": 0},
+        {"floor": 17000,   "ceiling": 64850,    "rate": 0.12, "base_tax": 1700.00},
+        {"floor": 64850,   "ceiling": 103350,   "rate": 0.22, "base_tax": 7442.00},
+        {"floor": 103350,  "ceiling": 197300,   "rate": 0.24, "base_tax": 15912.00},
+        {"floor": 197300,  "ceiling": 250500,   "rate": 0.32, "base_tax": 38460.00},
+        {"floor": 250500,  "ceiling": 626350,   "rate": 0.35, "base_tax": 55484.00},
+        {"floor": 626350,  "ceiling": null,     "rate": 0.37, "base_tax": 187031.50}
+      ]
+    },
+
+    "capital_gains_2025_long_term": {
+      "citation": "IRC §1(h); Rev. Proc. 2024-40 §3.03",
+      "description": "Long-term capital gains and qualified dividend rates for 2025.",
+      "single":  [{"floor": 0, "ceiling": 48350,  "rate": 0.00}, {"floor": 48350,  "ceiling": 533400, "rate": 0.15}, {"floor": 533400, "ceiling": null, "rate": 0.20}],
+      "mfj":     [{"floor": 0, "ceiling": 96700,  "rate": 0.00}, {"floor": 96700,  "ceiling": 600050, "rate": 0.15}, {"floor": 600050, "ceiling": null, "rate": 0.20}],
+      "mfs":     [{"floor": 0, "ceiling": 48350,  "rate": 0.00}, {"floor": 48350,  "ceiling": 300000, "rate": 0.15}, {"floor": 300000, "ceiling": null, "rate": 0.20}],
+      "hoh":     [{"floor": 0, "ceiling": 64750,  "rate": 0.00}, {"floor": 64750,  "ceiling": 566700, "rate": 0.15}, {"floor": 566700, "ceiling": null, "rate": 0.20}]
+    },
+
+    "niit": {
+      "rate": 0.038,
+      "citation": "IRC §1411",
+      "thresholds": {"single": 200000, "mfj": 250000, "mfs": 125000, "hoh": 200000},
+      "description": "Net Investment Income Tax 3.8% on investment income above MAGI thresholds. Thresholds are not indexed for inflation."
+    },
+
+    "kiddie_tax_2025": {
+      "citation": "IRC §1(g); Rev. Proc. 2024-40 §3.05",
+      "unearned_income_exempt": 1350,
+      "unearned_income_at_child_rate_ceiling": 2700,
+      "unearned_income_at_parent_rate_floor": 2700,
+      "description": "First $1,350 of child unearned income is exempt (standard deduction for unearned income). Next $1,350 taxed at child's rate. Unearned income above $2,700 taxed at parent's marginal rate. Applies to children under 19 (or under 24 if full-time student) per §1(g)(2)."
+    },
+
+    "retirement_accounts_2025": {
+      "ira_contribution_limit": {
+        "value": 7000,
+        "citation": "IRC §219(b); Notice 2024-80",
+        "description": "Annual IRA contribution limit (under age 50) for 2025."
+      },
+      "ira_earned_income_requirement": {
+        "citation": "IRC §219(b)(1)(A), §408A(c)(2)",
+        "description": "IRA contributions limited to lesser of contribution limit or earned income (compensation)."
+      },
+      "roth_distribution_qualification": {
+        "citation": "IRC §408A(d)",
+        "description": "Qualified Roth distributions (5-year holding period + age 59½, death, disability, or first-time home purchase) are tax-free."
+      },
+      "secure_act_10_year_rule": {
+        "citation": "IRC §401(a)(9)(H) as amended by SECURE Act of 2019",
+        "description": "Non-spouse beneficiaries of an IRA must distribute the entire account within 10 years of the original owner's death (with limited eligible designated beneficiary exceptions)."
+      },
+      "secure_2_529_to_roth_rollover": {
+        "citation": "IRC §529(c)(3)(E) as added by SECURE 2.0 §126",
+        "annual_limit_uses_ira_limit": true,
+        "lifetime_limit": 35000,
+        "account_age_minimum_years": 15,
+        "description": "Beginning 2024, up to $35,000 lifetime may be rolled from a 529 to a Roth IRA for the designated beneficiary, subject to annual IRA contribution limits, 15-year account age, and other conditions."
+      }
+    },
+
+    "section_529": {
+      "tax_free_growth_and_qualified_distributions": {
+        "citation": "IRC §529(c)(1), (c)(3)",
+        "description": "Earnings grow federal-income-tax-free; qualified higher-education and certain K-12 distributions are tax-free."
+      },
+      "nonqualified_withdrawal_penalty": {
+        "rate": 0.10,
+        "citation": "IRC §529(c)(6)",
+        "description": "10% additional federal tax on the earnings portion of non-qualified withdrawals, plus ordinary income tax on earnings."
+      },
+      "estate_exclusion": {
+        "citation": "IRC §529(c)(4)",
+        "description": "Donor retains control but assets are excluded from donor's gross estate (except 5-year election proration on death within 5 years)."
+      }
+    },
+
+    "ugma_utma": {
+      "gift_completed_at_contribution": {
+        "citation": "IRC §2511",
+        "description": "Transfer to a UGMA/UTMA account is a completed gift to the minor for federal gift tax purposes."
+      },
+      "custodian_donor_estate_inclusion": {
+        "citation": "IRC §2038",
+        "description": "If the donor serves as custodian and dies before the minor reaches majority, the custodial property is includible in the donor's gross estate."
+      },
+      "basis_rules": {
+        "citation": "IRC §1015 (gift basis); §1014 (step-up at recipient's death)",
+        "description": "Recipient takes carryover basis on the gift; assets receive §1014 step-up only at the recipient's death (not the donor's)."
+      }
+    },
+
+    "trump_account": {
+      "citation": "OBBBA §70404 (Pub. L. 119-21, enacted July 4, 2025); IRC §530A (proposed)",
+      "description": "Trump Account / 'MAGA Account' established by the One Big Beautiful Bill Act of 2025 for U.S.-citizen children. Tax-deferred custodial account restricted to broad-based U.S. equity index funds. Treasury implementing regulations were still being issued as of the modeled year; parameters below reflect statute as enacted with conservative assumptions on open questions.",
+      "federal_seed_amount": {
+        "value": 1000,
+        "citation": "OBBBA §70404(b)",
+        "description": "One-time federal seed deposit for U.S.-citizen children born 2025-2028 (pilot window)."
+      },
+      "federal_seed_eligibility_birth_years": {"start": 2025, "end": 2028},
+      "annual_contribution_cap_parent": {
+        "value": 5000,
+        "citation": "OBBBA §70404(c)(1)",
+        "description": "Maximum aggregate annual after-tax contribution from parents and other private sources per beneficiary. Not indexed for inflation as enacted."
+      },
+      "annual_contribution_cap_employer_within_parent": {
+        "value": 2500,
+        "citation": "OBBBA §70404(c)(2)",
+        "description": "Employer contributions are permitted up to $2,500/yr and count against the $5,000 parent cap."
+      },
+      "contribution_deductibility": {
+        "value": false,
+        "citation": "OBBBA §70404(d)",
+        "description": "Parent contributions are made with after-tax dollars; not deductible at federal level."
+      },
+      "investment_restriction": {
+        "citation": "OBBBA §70404(e)",
+        "description": "Funds restricted to broad-based U.S. equity index investments. Modeled with the same default return as taxable brokerage; no asset-class adjustment in MVP."
+      },
+      "early_withdrawal_age": {
+        "value": 18,
+        "citation": "OBBBA §70404(f)",
+        "description": "Beneficiary may not access funds before age 18. Withdrawals before 18 are not permitted absent narrow hardship rules to be defined by Treasury."
+      },
+      "distribution_tax_treatment": {
+        "citation": "OBBBA §70404(g); cross-reference to IRC §72 ordinary-income mechanics",
+        "description": "Distributions after age 18 taxed as ordinary income on the earnings portion (mirroring traditional IRA mechanics). Pending Treasury guidance, the MVP treats the entire balance as taxable ordinary income at the beneficiary's marginal rate when distributed.",
+        "earnings_only_taxable": true
+      },
+      "rollover_to_ira_available": {
+        "value": true,
+        "citation": "OBBBA §70404(h)",
+        "description": "After age 18, account may be rolled into a traditional or Roth IRA subject to the receiving account's contribution rules. MVP models terminal value before rollover."
+      },
+      "estate_treatment": {
+        "citation": "OBBBA §70404(i); IRC §2511",
+        "description": "Parent contributions are completed gifts to the child (§2511); the federal $1,000 seed is a government program transfer (not a gift from the donor). Asset is not includible in donor's gross estate."
+      },
+      "kiddie_tax_application": {
+        "applies": false,
+        "citation": "OBBBA §70404(g)(3)",
+        "description": "Internal account earnings are tax-deferred; kiddie tax (§1(g)) does not apply during the deferral period."
+      }
+    },
+
+    "section_2518_disclaimer": {
+      "citation": "IRC §2518",
+      "description": "Qualified disclaimer treated as if disclaimant predeceased decedent. Useful as post-death optimization. Out of MVP active modeling; surfaced as toggle.",
+      "active_in_mvp": false
+    },
+
+    "section_6166": {
+      "citation": "IRC §6166, §6601(j)",
+      "description": "Deferred installment payment of estate tax attributable to closely-held business interests with reduced interest rate. Schema reserved; not active in MVP.",
+      "active_in_mvp": false
+    },
+
+    "valuation_discounts": {
+      "citation": "IRC §§2701-2704",
+      "description": "Special valuation rules for closely-held entity interests. Schema reserved; not active in MVP.",
+      "active_in_mvp": false
+    }
+  },
+
+  "states": {
+    "NY": {
+      "name": "New York",
+      "income_tax": {
+        "citation": "NY Tax Law §601",
+        "description": "Graduated state income tax. NYC residents also pay city income tax (modeled as a sub-flag).",
+        "single": [
+          {"floor": 0,        "ceiling": 8500,     "rate": 0.04,    "base_tax": 0},
+          {"floor": 8500,     "ceiling": 11700,    "rate": 0.045,   "base_tax": 340.00},
+          {"floor": 11700,    "ceiling": 13900,    "rate": 0.0525,  "base_tax": 484.00},
+          {"floor": 13900,    "ceiling": 80650,    "rate": 0.055,   "base_tax": 599.50},
+          {"floor": 80650,    "ceiling": 215400,   "rate": 0.06,    "base_tax": 4270.75},
+          {"floor": 215400,   "ceiling": 1077550,  "rate": 0.0685,  "base_tax": 12355.75},
+          {"floor": 1077550,  "ceiling": 5000000,  "rate": 0.0965,  "base_tax": 71412.03},
+          {"floor": 5000000,  "ceiling": 25000000, "rate": 0.103,   "base_tax": 449909.23},
+          {"floor": 25000000, "ceiling": null,     "rate": 0.109,   "base_tax": 2509909.23}
+        ],
+        "mfj": [
+          {"floor": 0,        "ceiling": 17150,    "rate": 0.04,    "base_tax": 0},
+          {"floor": 17150,    "ceiling": 23600,    "rate": 0.045,   "base_tax": 686.00},
+          {"floor": 23600,    "ceiling": 27900,    "rate": 0.0525,  "base_tax": 976.25},
+          {"floor": 27900,    "ceiling": 161550,   "rate": 0.055,   "base_tax": 1202.00},
+          {"floor": 161550,   "ceiling": 323200,   "rate": 0.06,    "base_tax": 8552.75},
+          {"floor": 323200,   "ceiling": 2155350,  "rate": 0.0685,  "base_tax": 18251.75},
+          {"floor": 2155350,  "ceiling": 5000000,  "rate": 0.0965,  "base_tax": 143754.03},
+          {"floor": 5000000,  "ceiling": 25000000, "rate": 0.103,   "base_tax": 418264.85},
+          {"floor": 25000000, "ceiling": null,     "rate": 0.109,   "base_tax": 2478264.85}
+        ],
+        "mfs": [
+          {"floor": 0,        "ceiling": 8500,     "rate": 0.04,    "base_tax": 0},
+          {"floor": 8500,     "ceiling": 11700,    "rate": 0.045,   "base_tax": 340.00},
+          {"floor": 11700,    "ceiling": 13900,    "rate": 0.0525,  "base_tax": 484.00},
+          {"floor": 13900,    "ceiling": 80650,    "rate": 0.055,   "base_tax": 599.50},
+          {"floor": 80650,    "ceiling": 215400,   "rate": 0.06,    "base_tax": 4270.75},
+          {"floor": 215400,   "ceiling": 1077550,  "rate": 0.0685,  "base_tax": 12355.75},
+          {"floor": 1077550,  "ceiling": 5000000,  "rate": 0.0965,  "base_tax": 71412.03},
+          {"floor": 5000000,  "ceiling": 25000000, "rate": 0.103,   "base_tax": 449909.23},
+          {"floor": 25000000, "ceiling": null,     "rate": 0.109,   "base_tax": 2509909.23}
+        ],
+        "hoh": [
+          {"floor": 0,        "ceiling": 12800,    "rate": 0.04,    "base_tax": 0},
+          {"floor": 12800,    "ceiling": 17650,    "rate": 0.045,   "base_tax": 512.00},
+          {"floor": 17650,    "ceiling": 20900,    "rate": 0.0525,  "base_tax": 730.25},
+          {"floor": 20900,    "ceiling": 107650,   "rate": 0.055,   "base_tax": 900.88},
+          {"floor": 107650,   "ceiling": 269300,   "rate": 0.06,    "base_tax": 5672.13},
+          {"floor": 269300,   "ceiling": 1616450,  "rate": 0.0685,  "base_tax": 15371.13},
+          {"floor": 1616450,  "ceiling": 5000000,  "rate": 0.0965,  "base_tax": 107651.91},
+          {"floor": 5000000,  "ceiling": 25000000, "rate": 0.103,   "base_tax": 434264.59},
+          {"floor": 25000000, "ceiling": null,     "rate": 0.109,   "base_tax": 2494264.59}
+        ]
+      },
+      "nyc_income_tax_top_rate": {
+        "value": 0.03876,
+        "citation": "NYC Admin Code §11-1701",
+        "description": "Top NYC resident income tax marginal rate. Applied as a flat add-on at the top bracket for MVP simplicity; structure supports full bracket schedule."
+      },
+      "section_529_deduction": {
+        "single": 5000,
+        "mfj": 10000,
+        "citation": "NY Tax Law §612(c)(32); NY 529 Direct Plan rules",
+        "description": "Up to $5,000 ($10,000 MFJ) annual deduction for contributions to NY 529 Direct Plan."
+      },
+      "estate_tax": {
+        "exemption": 7160000,
+        "cliff_threshold_multiplier": 1.05,
+        "citation": "NY Tax Law §§951, 952, 954, 955; NYSDTF Form ET-706",
+        "description": "$7.16M exemption (2025). If NY taxable estate exceeds 105% of the basic exclusion amount, the entire estate is taxed with NO exemption credit (the 'cliff').",
+        "three_year_gift_addback": {
+          "citation": "NY Tax Law §954(a)(3)",
+          "description": "Gifts made within three years of death are added back to the NY gross estate."
+        },
+        "rate_schedule": [
+          {"floor": 0,         "ceiling": 500000,    "rate": 0.0306, "base_tax": 0},
+          {"floor": 500000,    "ceiling": 1000000,   "rate": 0.08,   "base_tax": 15300},
+          {"floor": 1000000,   "ceiling": 1500000,   "rate": 0.088,  "base_tax": 55300},
+          {"floor": 1500000,   "ceiling": 2000000,   "rate": 0.0996, "base_tax": 99300},
+          {"floor": 2000000,   "ceiling": 2500000,   "rate": 0.1024, "base_tax": 149100},
+          {"floor": 2500000,   "ceiling": 3000000,   "rate": 0.1216, "base_tax": 200300},
+          {"floor": 3000000,   "ceiling": 3500000,   "rate": 0.1296, "base_tax": 261100},
+          {"floor": 3500000,   "ceiling": 4000000,   "rate": 0.144,  "base_tax": 325900},
+          {"floor": 4000000,   "ceiling": 5000000,   "rate": 0.16,   "base_tax": 397900},
+          {"floor": 5000000,   "ceiling": 6000000,   "rate": 0.1664, "base_tax": 557900},
+          {"floor": 6000000,   "ceiling": 7000000,   "rate": 0.1728, "base_tax": 724300},
+          {"floor": 7000000,   "ceiling": 8000000,   "rate": 0.1792, "base_tax": 897100},
+          {"floor": 8000000,   "ceiling": 9000000,   "rate": 0.1856, "base_tax": 1076300},
+          {"floor": 9000000,   "ceiling": 10000000,  "rate": 0.192,  "base_tax": 1261900},
+          {"floor": 10000000,  "ceiling": null,      "rate": 0.16,   "base_tax": 1453900}
+        ]
+      },
+      "community_property": false,
+      "utma_age_of_majority": 21
+    },
+
+    "IL": {
+      "name": "Illinois",
+      "income_tax": {
+        "citation": "35 ILCS 5/201",
+        "description": "Flat individual income tax rate.",
+        "flat_rate": 0.0495
+      },
+      "section_529_deduction": {
+        "single": 10000,
+        "mfj": 20000,
+        "citation": "35 ILCS 5/203(a)(2)(Y); Bright Start / Bright Directions plan rules",
+        "description": "Up to $10,000 ($20,000 MFJ) annual deduction for contributions to Bright Start or Bright Directions 529 plans."
+      },
+      "estate_tax": {
+        "exemption": 4000000,
+        "portability": false,
+        "indexed_for_inflation": false,
+        "citation": "35 ILCS 405/3; 405/5",
+        "description": "$4M exemption, no portability between spouses, not inflation-indexed. Uses the federal pre-EGTRRA state death tax credit table to compute base tax, then adjusts via a recapture calculation. For MVP, modeled with a simplified graduated approximation that materially tracks the published Illinois Estate Tax Calculator within ~1%.",
+        "rate_schedule_approximation": [
+          {"floor": 0,         "ceiling": 40000,     "rate": 0.0,   "base_tax": 0},
+          {"floor": 40000,     "ceiling": 90000,     "rate": 0.008, "base_tax": 0},
+          {"floor": 90000,     "ceiling": 140000,    "rate": 0.016, "base_tax": 400},
+          {"floor": 140000,    "ceiling": 240000,    "rate": 0.024, "base_tax": 1200},
+          {"floor": 240000,    "ceiling": 440000,    "rate": 0.032, "base_tax": 3600},
+          {"floor": 440000,    "ceiling": 640000,    "rate": 0.040, "base_tax": 10000},
+          {"floor": 640000,    "ceiling": 840000,    "rate": 0.048, "base_tax": 18000},
+          {"floor": 840000,    "ceiling": 1040000,   "rate": 0.056, "base_tax": 27600},
+          {"floor": 1040000,   "ceiling": 1540000,   "rate": 0.064, "base_tax": 38800},
+          {"floor": 1540000,   "ceiling": 2040000,   "rate": 0.072, "base_tax": 70800},
+          {"floor": 2040000,   "ceiling": 2540000,   "rate": 0.080, "base_tax": 106800},
+          {"floor": 2540000,   "ceiling": 3040000,   "rate": 0.088, "base_tax": 146800},
+          {"floor": 3040000,   "ceiling": 3540000,   "rate": 0.096, "base_tax": 190800},
+          {"floor": 3540000,   "ceiling": 4040000,   "rate": 0.104, "base_tax": 238800},
+          {"floor": 4040000,   "ceiling": 5040000,   "rate": 0.112, "base_tax": 290800},
+          {"floor": 5040000,   "ceiling": 6040000,   "rate": 0.120, "base_tax": 402800},
+          {"floor": 6040000,   "ceiling": 7040000,   "rate": 0.128, "base_tax": 522800},
+          {"floor": 7040000,   "ceiling": 8040000,   "rate": 0.136, "base_tax": 650800},
+          {"floor": 8040000,   "ceiling": 9040000,   "rate": 0.144, "base_tax": 786800},
+          {"floor": 9040000,   "ceiling": 10040000,  "rate": 0.152, "base_tax": 930800},
+          {"floor": 10040000,  "ceiling": null,      "rate": 0.16,  "base_tax": 1082800}
+        ]
+      },
+      "community_property": false,
+      "utma_age_of_majority": 21
+    },
+
+    "TX": {
+      "name": "Texas",
+      "income_tax": {
+        "citation": "Tex. Const. art. VIII, §24-a",
+        "description": "Texas does not impose an individual income tax.",
+        "flat_rate": 0.0
+      },
+      "section_529_deduction": {
+        "single": 0,
+        "mfj": 0,
+        "citation": "N/A — no state income tax",
+        "description": "No state income tax means no 529 contribution deduction."
+      },
+      "estate_tax": {
+        "exemption": null,
+        "citation": "Tex. Tax Code Title 2, ch. 211 (repealed effective 2015)",
+        "description": "Texas does not impose a state estate or inheritance tax.",
+        "rate_schedule": []
+      },
+      "community_property": true,
+      "community_property_citation": "Tex. Fam. Code §3.002; IRC §1014(b)(6)",
+      "utma_age_of_majority": 21
+    }
+  },
+
+  "defaults": {
+    "expected_pretax_return": 0.07,
+    "inflation_rate": 0.025,
+    "dividend_yield": 0.018,
+    "qualified_dividend_fraction": 0.85,
+    "annual_portfolio_turnover": 0.10,
+    "long_term_gain_fraction_of_realized": 0.95,
+    "description": "Editable defaults applied when user does not supply overrides."
+  }
+}

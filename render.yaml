@@ -1,0 +1,26 @@
+# Render Blueprint — auto-provisions the backend as a free Python web service.
+# Connect this repo to render.com and it will pick up this file from the repo root.
+#
+# After deploy: copy the service URL (e.g. https://wealth-transfer-engine.onrender.com)
+# and set NEXT_PUBLIC_API_BASE on Vercel to that URL.
+
+services:
+  - type: web
+    name: wealth-transfer-engine
+    runtime: python
+    region: oregon
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -e ".[dev]"
+    startCommand: uvicorn api:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      # Set these in the Render dashboard if you want Blue J research live.
+      # - key: BLUEJ_API_KEY
+      #   sync: false
+      # Allow the deployed frontend origin (set after Vercel deploy).
+      - key: CORS_ALLOW_ORIGINS
+        value: "*"

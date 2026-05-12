@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+}
+
+.citation-link {
+  @apply text-blue-700 hover:underline cursor-help;
+}
+
+.citation-hover {
+  @apply absolute z-50 max-w-xs p-3 bg-white border border-slate-200 shadow-lg rounded-md text-xs text-slate-700;
+}

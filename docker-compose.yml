@@ -1,0 +1,17 @@
+# Local docker-compose for self-host. Brings up the backend; run the frontend
+# separately with `npm run dev` inside /frontend.
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      CORS_ALLOW_ORIGINS: "*"
+      # BLUEJ_API_KEY: ""   # uncomment + set to enable Blue J research
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/healthz').status == 200 else 1)"]
+      interval: 10s
+      timeout: 3s
+      retries: 5

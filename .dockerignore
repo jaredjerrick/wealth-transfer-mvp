@@ -1,0 +1,8 @@
+**/__pycache__/
+**/.pytest_cache/
+**/.next/
+**/node_modules/
+**/.env*
+.git/
+.vscode/
+*.egg-info/
