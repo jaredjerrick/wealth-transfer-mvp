@@ -19,13 +19,23 @@ For headline number purposes, MVP assumes the corpus is used for qualified
 education expenses (tax-free out). Non-qualified withdrawals would face the
 §529(c)(6) 10% penalty + ordinary income on earnings — surfaced as a warning
 if user later supplies a non-qualified usage flag.
+
+**Contribution caps enforced (added per product feedback):**
+  - **§529(b)(7) adequate-safeguards:** each state plan enforces an aggregate
+    per-beneficiary contribution limit (NY $520K, IL $500K, TX $500K). Once
+    cumulative contributions reach this cap, the engine stops adding new
+    dollars to corpus (corpus continues to grow tax-free).
+  - **Age-22 cutoff:** the engine assumes no further contributions after the
+    beneficiary turns 22 (typical undergrad completion). This is a planning
+    assumption layered on top of §529(b)(7), not a federal rule. SECURE 2.0
+    §126 Roth-rollover handles residual corpus.
 """
 
 from __future__ import annotations
 
 from decimal import Decimal
 
-from ..citations import CITATIONS
+from ..citations import CITATIONS, Citation
 from ..inputs import DonorInputs
 from ..regimes.base import StateRegime
 from ..tax_context import D, ZERO, TaxContext, round_cents
@@ -41,9 +51,13 @@ class Section529Strategy(Strategy):
         regime: StateRegime,
         inputs: DonorInputs,
     ) -> StrategyResult:
-        annual_contribution = D(inputs.annual_contribution)
+        annual_contribution_requested = D(inputs.annual_contribution)
         horizon = inputs.investment_horizon_years
         r = D(inputs.expected_pretax_return)
+
+        # ----- contribution-cap parameters -----
+        age_cutoff = int(ctx.federal["section_529"]["default_contribution_age_cutoff"]["value"])
+        aggregate_cap = regime.section_529_aggregate_cap
 
         # ----- Gift-tax handling -----
         # 5-year election lets donor frontload up to 5× the annual exclusion
@@ -52,14 +66,12 @@ class Section529Strategy(Strategy):
         # contribution is large.
         annual_exclusion = ctx.annual_exclusion_total(num_donees=1)
         cites_gift: list = [CITATIONS["annual_exclusion"], CITATIONS["completed_gift"]]
-        if inputs.elect_529_five_year and annual_contribution > annual_exclusion:
+        if inputs.elect_529_five_year and annual_contribution_requested > annual_exclusion:
             cites_gift.append(CITATIONS["five_year_election_529"])
 
         # ----- State income tax deduction (benefit calculated at donor's marginal) -----
-        state_deductible, state_ded_cites = regime.section_529_deduction(annual_contribution, inputs)
+        state_deductible, state_ded_cites = regime.section_529_deduction(annual_contribution_requested, inputs)
         # Approximate state benefit = deductible × state marginal income rate.
-        # For flat-rate states this is exact; for graduated, we use the donor's
-        # average state rate from total AGI as a reasonable proxy.
         if regime.code == "IL":
             state_marginal = D(regime.state_data["income_tax"]["flat_rate"])
         elif regime.code == "TX":
@@ -68,39 +80,82 @@ class Section529Strategy(Strategy):
             agi_state_tax = regime.state_income_tax(D(inputs.donor_gross_income_agi), inputs).state_income_tax
             state_marginal = (agi_state_tax / D(inputs.donor_gross_income_agi)) if D(inputs.donor_gross_income_agi) > ZERO else ZERO
 
-        annual_state_benefit = state_deductible * state_marginal  # treated as a negative drag
-
-        # ----- Accumulation (tax-free) -----
+        # ----- Accumulation (tax-free), with cap enforcement -----
         balance = ZERO
-        contributions_to_date = ZERO
+        cumulative_contributions = ZERO
         cumulative_state_benefit = ZERO
         yearly: list[YearlyRow] = []
+        warnings: list[str] = []
+
+        age_cap_hit_year: int | None = None
+        aggregate_cap_hit_year: int | None = None
 
         for year in range(horizon):
-            balance += annual_contribution
-            contributions_to_date += annual_contribution
+            child_age_this_year = inputs.child_age + year
+
+            # --- Determine this year's actual contribution ---
+            this_year_contribution = ZERO
+
+            if child_age_this_year > age_cutoff:
+                # Age-based cutoff binds.
+                if age_cap_hit_year is None:
+                    age_cap_hit_year = year
+                    warnings.append(
+                        f"529 contributions stop at end of year {year}: beneficiary turns "
+                        f"{age_cutoff + 1}, past the default age-{age_cutoff} education-funding "
+                        f"window. Corpus continues to grow tax-free."
+                    )
+            elif cumulative_contributions >= aggregate_cap:
+                # Aggregate state cap binds.
+                if aggregate_cap_hit_year is None:
+                    aggregate_cap_hit_year = year
+                    warnings.append(
+                        f"§529(b)(7) aggregate cap reached in year {year}: cumulative "
+                        f"contributions of ${cumulative_contributions:,.0f} have hit the "
+                        f"{regime.name} aggregate per-beneficiary limit of "
+                        f"${aggregate_cap:,.0f}. No further contributions accepted; corpus "
+                        f"continues to grow tax-free."
+                    )
+            else:
+                # Contribution is allowed — but the aggregate cap may partially bind
+                # this year (we top up to the cap and no more).
+                remaining_room = aggregate_cap - cumulative_contributions
+                this_year_contribution = min(annual_contribution_requested, remaining_room)
+                if this_year_contribution < annual_contribution_requested:
+                    # The cap binds *partway* through this year.
+                    if aggregate_cap_hit_year is None:
+                        aggregate_cap_hit_year = year
+                        warnings.append(
+                            f"§529(b)(7) aggregate cap partially binds in year {year}: only "
+                            f"${this_year_contribution:,.0f} of the requested "
+                            f"${annual_contribution_requested:,.0f} contribution is accepted "
+                            f"before hitting the {regime.name} cap of ${aggregate_cap:,.0f}."
+                        )
+
+            balance += this_year_contribution
+            cumulative_contributions += this_year_contribution
             balance += balance * r  # tax-free growth
-            cumulative_state_benefit += annual_state_benefit
+
+            # State income-tax deduction only applies to the deductible portion of
+            # *actual* contributions this year, capped at the state deduction limit.
+            deductible_this_year = min(this_year_contribution, state_deductible)
+            year_state_benefit = deductible_this_year * state_marginal
+            cumulative_state_benefit += year_state_benefit
+
             yearly.append(YearlyRow(
                 year_index=year,
-                child_age=inputs.child_age + year,
-                contributions_to_date=round_cents(contributions_to_date),
+                child_age=child_age_this_year,
+                contributions_to_date=round_cents(cumulative_contributions),
                 pretax_balance=round_cents(balance),
                 annual_tax_drag=ZERO,
                 cumulative_tax_drag=round_cents(-cumulative_state_benefit),  # negative = benefit
             ))
 
         pretax_terminal = balance
-        # Qualified distributions = tax-free → after-tax to recipient = pretax_terminal.
-        # State income deduction is a *donor-side* benefit that reduces the donor's
-        # tax bill; it does not increase the corpus but it does increase the donor's
-        # net wealth, which in turn increases what flows to the heir on death. We
-        # represent this as a separate "negative tax" line in the breakdown.
+        # Qualified distributions are tax-free → after-tax to recipient = pretax_terminal.
 
         breakdown = self._empty_breakdown()
         breakdown["state_income"] = round_cents(-cumulative_state_benefit)  # negative = saved
-        # No federal/state estate tax on 529 corpus (§529(c)(4)).
-        # No gift tax in normal usage (annual exclusion).
 
         after_tax_to_recipient = pretax_terminal
 
@@ -108,6 +163,8 @@ class Section529Strategy(Strategy):
             CITATIONS["529_growth"],
             CITATIONS["529_qualified_distribution"],
             CITATIONS["529_estate_exclusion"],
+            CITATIONS["529_adequate_safeguards"],
+            CITATIONS["529_aggregate_cap_state"],
             CITATIONS["annual_exclusion"],
             *cites_gift,
             *state_ded_cites,
@@ -115,31 +172,35 @@ class Section529Strategy(Strategy):
 
         assumptions = [
             "Beneficiary uses corpus for qualified education expenses — distributions are federal-tax-free under §529(c)(3).",
-            f"State income-tax deduction: ${round_cents(state_deductible)}/yr × state marginal rate ≈ ${round_cents(annual_state_benefit)} benefit/yr.",
+            f"State income-tax deduction capped at deductible amount × state marginal rate "
+            f"(${state_deductible:,.0f}/yr deductible while contributions are active).",
             "Corpus excluded from donor's gross estate under §529(c)(4).",
+            f"Contributions stop at the earlier of (i) beneficiary age {age_cutoff} "
+            f"(end of typical undergrad), or (ii) aggregate per-beneficiary cap of "
+            f"${aggregate_cap:,.0f} for {regime.name}. §529(b)(7) requires the plan to "
+            f"prevent contributions exceeding qualified education expenses.",
             "SECURE 2.0 §126: up to $35,000 lifetime may be rolled to a Roth IRA for the beneficiary (subject to 15-year account age and annual IRA limits).",
         ]
-        warnings = []
         if inputs.elect_529_five_year:
             assumptions.append(
                 f"5-year forward election (§529(c)(2)(B)) elected — year 1 gift treated "
                 f"as made ratably over 5 years for annual exclusion purposes."
             )
 
-        if annual_contribution > annual_exclusion and not inputs.elect_529_five_year:
+        if annual_contribution_requested > annual_exclusion and not inputs.elect_529_five_year:
             warnings.append(
-                f"Annual contribution ${annual_contribution:,.0f} exceeds annual exclusion "
-                f"${annual_exclusion:,.0f}. Consider electing the §529(c)(2)(B) five-year "
-                f"forward election to avoid using lifetime exemption."
+                f"Annual contribution ${annual_contribution_requested:,.0f} exceeds annual "
+                f"exclusion ${annual_exclusion:,.0f}. Consider electing the §529(c)(2)(B) "
+                f"five-year forward election to avoid using lifetime exemption."
             )
 
         return StrategyResult(
             strategy_name=self.name,
-            contribution_total=round_cents(contributions_to_date),
+            contribution_total=round_cents(cumulative_contributions),
             pretax_terminal_value=round_cents(pretax_terminal),
             taxes_paid_breakdown=breakdown,
             after_tax_wealth_to_recipient=round_cents(after_tax_to_recipient),
-            effective_tax_rate=self._effective_tax_rate(breakdown, contributions_to_date, pretax_terminal),
+            effective_tax_rate=self._effective_tax_rate(breakdown, cumulative_contributions, pretax_terminal),
             year_by_year_projection=yearly,
             citations=citations,
             assumptions=assumptions,

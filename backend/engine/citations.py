@@ -242,6 +242,16 @@ CITATIONS = {
         description="10% additional tax on earnings portion of non-qualified 529 withdrawals.",
         url="https://www.law.cornell.edu/uscode/text/26/529",
     ),
+    "529_adequate_safeguards": Citation(
+        section="IRC §529(b)(7)",
+        description="Programs must prevent contributions exceeding the beneficiary's qualified education expenses — implemented by each state via an aggregate per-beneficiary contribution cap.",
+        url="https://www.law.cornell.edu/uscode/text/26/529",
+    ),
+    "529_aggregate_cap_state": Citation(
+        section="State 529 plan disclosure statement",
+        description="Aggregate per-beneficiary contribution limit set by the state program administrator to satisfy IRC §529(b)(7).",
+        scope="state",
+    ),
     # ---- State estate tax ----
     "ny_estate_cliff": Citation(
         section="NY Tax Law §§952, 954, 955",

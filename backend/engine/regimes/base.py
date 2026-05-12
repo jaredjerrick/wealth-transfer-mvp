@@ -81,3 +81,14 @@ class StateRegime(ABC):
     @property
     def utma_age_of_majority(self) -> int:
         return int(self.state_data.get("utma_age_of_majority", 21))
+
+    @property
+    def section_529_aggregate_cap(self) -> Decimal:
+        """Aggregate per-beneficiary contribution limit for the state's 529 plan
+        (implements IRC §529(b)(7) safeguards). Returns the state's cap as a Decimal."""
+        from ..tax_context import D
+        cap = self.state_data.get("section_529_aggregate_contribution_limit", {}).get("value")
+        if cap is None:
+            # Conservative default if a state's rules file lacks the entry.
+            return D("500000")
+        return D(cap)

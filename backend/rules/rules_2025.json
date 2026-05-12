@@ -214,6 +214,14 @@
       "estate_exclusion": {
         "citation": "IRC §529(c)(4)",
         "description": "Donor retains control but assets are excluded from donor's gross estate (except 5-year election proration on death within 5 years)."
+      },
+      "adequate_safeguards_required": {
+        "citation": "IRC §529(b)(7)",
+        "description": "A program is a qualified tuition program only if it maintains adequate safeguards against contributions exceeding the amount necessary to provide for the beneficiary's qualified higher education expenses. Implemented by every state via an aggregate per-beneficiary contribution limit."
+      },
+      "default_contribution_age_cutoff": {
+        "value": 22,
+        "description": "Engine default: 529 contributions stop at the end of the year the beneficiary turns 22 (typical undergrad completion). This is a planning assumption layered on top of §529(b)(7); it is not itself a federal rule. SECURE 2.0 §126 Roth-rollover ($35K lifetime, 15-yr account age) handles residual corpus past this point."
       }
     },
 
@@ -367,6 +375,11 @@
         "citation": "NY Tax Law §612(c)(32); NY 529 Direct Plan rules",
         "description": "Up to $5,000 ($10,000 MFJ) annual deduction for contributions to NY 529 Direct Plan."
       },
+      "section_529_aggregate_contribution_limit": {
+        "value": 520000,
+        "citation": "NY 529 Direct Plan Disclosure Booklet; implements IRC §529(b)(7) safeguards",
+        "description": "Aggregate per-beneficiary contribution limit for NY 529 plans (combined across all NY 529 accounts for the same beneficiary)."
+      },
       "estate_tax": {
         "exemption": 7160000,
         "cliff_threshold_multiplier": 1.05,
@@ -410,6 +423,11 @@
         "mfj": 20000,
         "citation": "35 ILCS 5/203(a)(2)(Y); Bright Start / Bright Directions plan rules",
         "description": "Up to $10,000 ($20,000 MFJ) annual deduction for contributions to Bright Start or Bright Directions 529 plans."
+      },
+      "section_529_aggregate_contribution_limit": {
+        "value": 500000,
+        "citation": "Bright Start / Bright Directions Program Disclosure Statement; implements IRC §529(b)(7) safeguards",
+        "description": "Aggregate per-beneficiary contribution limit for IL 529 plans (combined across all IL 529 accounts for the same beneficiary)."
       },
       "estate_tax": {
         "exemption": 4000000,
@@ -457,6 +475,11 @@
         "mfj": 0,
         "citation": "N/A — no state income tax",
         "description": "No state income tax means no 529 contribution deduction."
+      },
+      "section_529_aggregate_contribution_limit": {
+        "value": 500000,
+        "citation": "Texas College Savings Plan / LoneStar 529 Disclosure Statement; implements IRC §529(b)(7) safeguards",
+        "description": "Aggregate per-beneficiary contribution limit for Texas-administered 529 plans."
       },
       "estate_tax": {
         "exemption": null,
