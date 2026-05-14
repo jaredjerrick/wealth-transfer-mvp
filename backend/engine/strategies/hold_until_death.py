@@ -23,6 +23,8 @@ from ..inputs import DonorInputs
 from ..regimes.base import StateRegime
 from ..tax_context import D, ZERO, TaxContext, round_cents
 from .base import Strategy, StrategyResult, YearlyRow
+from .explain import build_tax_explanations
+from ..inputs import VehicleKey
 
 
 class HoldUntilDeathStrategy(Strategy):
@@ -45,7 +47,8 @@ class HoldUntilDeathStrategy(Strategy):
         ltcg_rate = ctx.federal_ltcg_rate(donor_agi)
         niit_rate = ctx.niit_rate_applies(donor_agi)
 
-        balance = ZERO
+        existing = D(inputs.existing_balances.get(VehicleKey.HOLD, 0))
+        balance = existing
         contributions_to_date = ZERO
         cumulative_drag = ZERO
         cumulative_cap_gains_tax = ZERO
@@ -105,12 +108,22 @@ class HoldUntilDeathStrategy(Strategy):
         )
         state_estate_on_slice = state_estate_result.state_estate_tax * slice_share
 
-        after_tax_to_recipient = pretax_terminal - federal_estate_on_slice - state_estate_on_slice
+        # GST overlay if the recipient is a skip person.
+        gst_on_slice = ZERO
+        gst_cites: list = []
+        if inputs.elect_skip_generation:
+            net_after_estate = pretax_terminal - federal_estate_on_slice - state_estate_on_slice
+            gst_on_slice, _, gst_cites = ctx.apply_gst(net_after_estate)
+
+        after_tax_to_recipient = (
+            pretax_terminal - federal_estate_on_slice - state_estate_on_slice - gst_on_slice
+        )
 
         breakdown = self._empty_breakdown()
         breakdown["capital_gains"] = round_cents(cumulative_cap_gains_tax)
         breakdown["state_income"] = round_cents(cumulative_state_income_tax)
         breakdown["estate"] = round_cents(federal_estate_on_slice)
+        breakdown["gst"] = round_cents(gst_on_slice)
         breakdown["state_estate"] = round_cents(state_estate_on_slice)
 
         citations = [
@@ -124,6 +137,8 @@ class HoldUntilDeathStrategy(Strategy):
         ]
         if regime.is_community_property and inputs.spouse_present:
             citations.append(CITATIONS["community_property_double_step_up"])
+        if gst_on_slice > ZERO:
+            citations.extend(gst_cites)
 
         assumptions = [
             "Buy-and-hold portfolio; portfolio turnover ≈ 0 — minimal realized gains during accumulation.",
@@ -134,6 +149,30 @@ class HoldUntilDeathStrategy(Strategy):
             f"(deductible under §2055).",
         ]
         warnings = list(state_estate_result.warnings)
+
+        rationales = {
+            "capital_gains": "Minimal qualified-dividend drag during buy-and-hold accumulation; turnover ≈ 0.",
+            "state_income": f"{regime.name} tax on the small dividend stream.",
+            "estate": (
+                f"Pro-rata slice of the federal estate tax on a taxable estate of "
+                f"${round_cents(taxable_estate):,.0f}, after §2010 unified credit "
+                f"(${applicable_exclusion:,.0f}). The §1014 step-up forgives embedded gains but "
+                f"the corpus itself is still includible in the gross estate."
+            ),
+            "state_estate": f"Pro-rata slice of the {regime.name} state estate tax.",
+            "gst": (
+                f"Generation-skipping transfer tax at {ctx.gst_top_rate * 100:.0f}% on the portion of "
+                f"the transfer exceeding the remaining §2631 GST exemption "
+                f"(${ctx.gst_exemption:,.0f} for 2025)."
+            ),
+        }
+
+        if existing > ZERO:
+            assumptions.append(
+                f"Starting corpus: ${existing:,.0f} of existing hold-until-death holdings seeded at year 0."
+            )
+        if inputs.elect_skip_generation:
+            assumptions.append("Recipient designated as a skip person — GST tax (§§2611, 2631, 2641) applied.")
 
         return StrategyResult(
             strategy_name=self.name,
@@ -146,4 +185,5 @@ class HoldUntilDeathStrategy(Strategy):
             citations=citations,
             assumptions=assumptions,
             warnings=warnings,
+            tax_explanations=build_tax_explanations(breakdown, rationales),
         )

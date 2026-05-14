@@ -26,6 +26,8 @@ from ..inputs import DonorInputs
 from ..regimes.base import StateRegime
 from ..tax_context import D, ZERO, TaxContext, round_cents
 from .base import Strategy, StrategyResult, YearlyRow
+from .explain import build_tax_explanations
+from ..inputs import VehicleKey
 
 
 class RothIRAStrategy(Strategy):
@@ -65,7 +67,8 @@ class RothIRAStrategy(Strategy):
         horizon = inputs.investment_horizon_years
         r = D(inputs.expected_pretax_return)
 
-        balance = ZERO
+        existing = D(inputs.existing_balances.get(VehicleKey.ROTH_IRA, 0))
+        balance = existing
         contributions_to_date = ZERO
         yearly: list[YearlyRow] = []
 
@@ -120,6 +123,11 @@ class RothIRAStrategy(Strategy):
                 f"capped at earned income per §408A(c)(2)."
             )
 
+        if existing > ZERO:
+            assumptions.append(
+                f"Starting corpus: ${existing:,.0f} of existing Roth balance seeded at year 0."
+            )
+
         return StrategyResult(
             strategy_name=self.name,
             contribution_total=round_cents(contributions_to_date),
@@ -131,4 +139,5 @@ class RothIRAStrategy(Strategy):
             citations=citations,
             assumptions=assumptions,
             warnings=warnings,
+            tax_explanations=build_tax_explanations(breakdown, {}),
         )

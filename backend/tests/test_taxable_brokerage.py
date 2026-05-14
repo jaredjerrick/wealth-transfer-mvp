@@ -201,12 +201,16 @@ def test_tx_beats_ny_at_mid_net_worth(rules):
 # ---------------------------------------------------------------------------
 
 def test_compare_returns_seven_strategies(rules):
+    # The engine now returns 7 base strategies + 1 Diversified Portfolio composite
+    # (only available when the user supplies an allocation). With no allocation in
+    # this test fixture the composite returns is_available=False.
     inputs = _build(StateCode.IL, Decimal("5000000"), horizon=15)
     result = compare_strategies(inputs, rules=rules)
-    assert len(result.results) == 7
+    assert len(result.results) == 8
     available = [r for r in result.results if r.is_available]
     assert any(r.strategy_name == "Taxable Brokerage" for r in available)
     assert any(r.strategy_name == "Trump Account" for r in available)
+    assert any(r.strategy_name == "Diversified Portfolio" for r in result.results)
 
 
 def test_compare_recommendations_fire_appropriately(rules):

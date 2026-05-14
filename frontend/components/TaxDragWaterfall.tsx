@@ -11,7 +11,7 @@ import {
   Cell,
 } from "recharts";
 import type { CompareResultDto, StrategyResultDto } from "../lib/types";
-import { formatMoney } from "../lib/api";
+import { formatMoney, formatMoneyCompact } from "../lib/api";
 
 interface Props {
   data: CompareResultDto;
@@ -62,7 +62,7 @@ export function TaxDragWaterfall({ data }: Props) {
           <YAxis
             stroke="#64748b"
             fontSize={11}
-            tickFormatter={(v) => `$${(v / 1000).toFixed(0)}K`}
+            tickFormatter={(v) => formatMoneyCompact(v)}
           />
           <Tooltip formatter={(v: number) => formatMoney(v)} />
           <Bar dataKey="amount">

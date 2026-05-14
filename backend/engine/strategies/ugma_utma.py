@@ -24,6 +24,8 @@ from ..inputs import DonorInputs
 from ..regimes.base import StateRegime
 from ..tax_context import D, ZERO, TaxContext, round_cents
 from .base import Strategy, StrategyResult, YearlyRow
+from .explain import build_tax_explanations
+from ..inputs import VehicleKey
 
 
 class UGMAUTMAStrategy(Strategy):
@@ -45,8 +47,9 @@ class UGMAUTMAStrategy(Strategy):
 
         age_of_majority = regime.utma_age_of_majority
 
-        balance = ZERO
-        cost_basis = ZERO
+        existing = D(inputs.existing_balances.get(VehicleKey.UGMA, 0))
+        balance = existing
+        cost_basis = existing
         contributions_to_date = ZERO
         cumulative_drag = ZERO
         cumulative_income_tax = ZERO
@@ -167,6 +170,23 @@ class UGMAUTMAStrategy(Strategy):
             "Carryover basis (§1015) — recipient inherits donor's basis. MVP assumes immediate sale at majority with embedded gain taxed at 0% LTCG bracket (child has low income).",
         ]
 
+        if existing > ZERO:
+            assumptions.append(
+                f"Starting corpus: ${existing:,.0f} of existing UGMA/UTMA balance seeded at year 0 with full basis."
+            )
+        if inputs.elect_skip_generation:
+            assumptions.append(
+                "Direct-skip UGMA gifts to a grandchild typically qualify for the §2503(b) annual "
+                "exclusion and GST exemption allocation under §2632 — MVP assumes the gift is fully "
+                "GST-sheltered, so no incremental GST tax is shown."
+            )
+
+        rationales = {
+            "income": "Kiddie tax (§1(g)) on unearned income above the $2,700 floor — taxed at parent's marginal rate while child is under 19.",
+            "capital_gains": "Embedded gain on the carryover-basis corpus; recipient sells at the 0% LTCG bracket (assumed low income in MVP).",
+            "state_income": f"{regime.name} tax on the child's unearned income.",
+        }
+
         return StrategyResult(
             strategy_name=self.name,
             contribution_total=round_cents(contributions_to_date),
@@ -178,4 +198,5 @@ class UGMAUTMAStrategy(Strategy):
             citations=citations,
             assumptions=assumptions,
             warnings=warnings,
+            tax_explanations=build_tax_explanations(breakdown, rationales),
         )

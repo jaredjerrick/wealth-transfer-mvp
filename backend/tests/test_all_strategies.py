@@ -248,14 +248,24 @@ def test_roth_beats_traditional_at_same_inputs(rules):
 @pytest.mark.parametrize("state", [StateCode.NY, StateCode.IL, StateCode.TX])
 @pytest.mark.parametrize("net_worth", [Decimal("500000"), Decimal("5000000"), Decimal("25000000")])
 def test_compare_runs_all_tiers_all_states(rules, state, net_worth):
-    """Spec acceptance: every strategy returns a result for every state × tier combination."""
+    """Spec acceptance: every strategy returns a result for every state × tier combination.
+
+    There are 7 first-class strategies, plus the Diversified Portfolio composite that
+    is only available when the user supplies an allocation; without one, it returns
+    `is_available=False`. We assert both totals here so future regressions catch either
+    direction of drift.
+    """
     inputs = _build(state, net_worth, child_earned=Decimal("7000"), horizon=15)
     result = compare_strategies(inputs, rules=rules)
-    assert len(result.results) == 7
-    # All strategies should be available because we provided earned income.
+    # 7 base strategies + 1 composite (Diversified Portfolio).
+    assert len(result.results) == 8
+    # All non-composite strategies should be available because we provided earned income.
     available_count = sum(1 for r in result.results if r.is_available)
     assert available_count == 7, (
         f"Expected 7 available strategies for {state.value} @ ${net_worth}; "
         f"got {available_count}. Unavailable: "
         f"{[r.strategy_name for r in result.results if not r.is_available]}"
     )
+    # Diversified composite should be the unavailable one, since no allocation was supplied.
+    blocked = [r for r in result.results if not r.is_available]
+    assert blocked and blocked[0].strategy_name == "Diversified Portfolio"

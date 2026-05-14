@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import type { CompareResultDto } from "../lib/types";
+import { formatMoney, formatMoneyCompact } from "../lib/api";
 
 const PALETTE = [
   "#2563eb", "#16a34a", "#d97706", "#7c3aed", "#dc2626", "#0891b2", "#db2777",
@@ -63,8 +64,8 @@ export function AccumulationChart({ data }: Props) {
         <LineChart data={series} margin={{ top: 5, right: 16, left: 0, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
           <XAxis dataKey="year" stroke="#64748b" fontSize={11} label={{ value: "Year", position: "insideBottom", offset: -3, fill: "#64748b", fontSize: 11 }} />
-          <YAxis stroke="#64748b" fontSize={11} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}K`} />
-          <Tooltip formatter={(v: number) => `$${v.toLocaleString("en-US", { maximumFractionDigits: 0 })}`} />
+          <YAxis stroke="#64748b" fontSize={11} tickFormatter={(v) => formatMoneyCompact(v)} />
+          <Tooltip formatter={(v: number) => formatMoney(v)} />
           <Legend wrapperStyle={{ fontSize: 11 }} />
           {available.map((r, i) =>
             visible[r.strategy_name] ? (

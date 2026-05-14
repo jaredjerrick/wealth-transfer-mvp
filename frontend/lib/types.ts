@@ -4,6 +4,21 @@ export type FilingStatus = "single" | "mfj" | "mfs" | "hoh";
 export type StateCode = "NY" | "IL" | "TX";
 export type MortalityModel = "deterministic" | "actuarial";
 
+// Canonical vehicle keys — must match engine.inputs.VehicleKey on the backend.
+export type VehicleKey =
+  | "taxable_brokerage"
+  | "hold_until_death"
+  | "section_529"
+  | "ugma_utma"
+  | "traditional_ira"
+  | "roth_ira"
+  | "trump_account";
+
+export interface AllocationItem {
+  vehicle: VehicleKey;
+  annual_amount: string;
+}
+
 export interface DonorInputsPayload {
   donor_age: number;
   donor_gross_income_agi: string;
@@ -12,10 +27,15 @@ export interface DonorInputsPayload {
   nyc_resident?: boolean;
   donor_net_worth: string;
   spouse_present: boolean;
+  num_children?: number;
+  planned_retirement_age?: number | null;
   child_age: number;
   child_earned_income: string;
+  child_expects_college?: boolean;
+  existing_balances?: Partial<Record<VehicleKey, string>>;
   investment_horizon_years: number;
   annual_contribution: string;
+  allocation?: AllocationItem[] | null;
   expected_pretax_return: string;
   inflation_rate?: string;
   mortality_model?: MortalityModel;
@@ -23,6 +43,22 @@ export interface DonorInputsPayload {
   elect_529_five_year?: boolean;
   elect_gift_splitting?: boolean;
   charitable_bequest_pct?: string;
+  // GST / skip-generation
+  elect_skip_generation?: boolean;
+  // Life events
+  plan_pay_college?: boolean;
+  plan_pay_wedding?: boolean;
+  plan_pay_first_home?: boolean;
+  est_college_cost_today?: string;
+  est_wedding_cost_today?: string;
+  est_first_home_help_today?: string;
+}
+
+export interface TaxExplanation {
+  line: string;
+  label: string;
+  amount: string;
+  rationale: string;
 }
 
 export interface Citation {
@@ -54,6 +90,7 @@ export interface StrategyResultDto {
   citations: Citation[];
   assumptions: string[];
   warnings: string[];
+  tax_explanations?: TaxExplanation[];
 }
 
 export interface CompareResultDto {

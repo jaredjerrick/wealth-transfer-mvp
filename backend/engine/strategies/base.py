@@ -35,6 +35,28 @@ class YearlyRow:
 
 
 @dataclass
+class TaxExplanation:
+    """A line item in the taxes-paid breakdown plus a why-it-was-paid rationale.
+
+    The wire shape includes the human-readable amount string so the UI can
+    show the figure inline with the explanation without having to re-look up
+    the breakdown dict.
+    """
+    line: str                # one of: income, capital_gains, gift, estate, gst, state_income, state_estate
+    label: str               # display label, e.g. "Federal estate tax"
+    amount: Decimal
+    rationale: str           # why this tax was paid, in plain language
+
+    def to_dict(self) -> dict:
+        return {
+            "line": self.line,
+            "label": self.label,
+            "amount": str(self.amount),
+            "rationale": self.rationale,
+        }
+
+
+@dataclass
 class StrategyResult:
     strategy_name: str
     contribution_total: Decimal
@@ -48,6 +70,7 @@ class StrategyResult:
     warnings: list[str] = field(default_factory=list)
     is_available: bool = True   # False for strategies blocked by input constraints (e.g., Roth IRA with no earned income)
     unavailable_reason: Optional[str] = None
+    tax_explanations: list["TaxExplanation"] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         seen: set[tuple[str, str]] = set()
@@ -71,6 +94,7 @@ class StrategyResult:
             "citations": [c.to_dict() for c in unique_citations],
             "assumptions": self.assumptions,
             "warnings": self.warnings,
+            "tax_explanations": [t.to_dict() for t in self.tax_explanations],
         }
 
 

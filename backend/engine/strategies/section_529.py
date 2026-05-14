@@ -40,6 +40,8 @@ from ..inputs import DonorInputs
 from ..regimes.base import StateRegime
 from ..tax_context import D, ZERO, TaxContext, round_cents
 from .base import Strategy, StrategyResult, YearlyRow
+from .explain import build_tax_explanations
+from ..inputs import VehicleKey
 
 
 class Section529Strategy(Strategy):
@@ -81,7 +83,9 @@ class Section529Strategy(Strategy):
             state_marginal = (agi_state_tax / D(inputs.donor_gross_income_agi)) if D(inputs.donor_gross_income_agi) > ZERO else ZERO
 
         # ----- Accumulation (tax-free), with cap enforcement -----
-        balance = ZERO
+        # Seed existing 529 balance, if any.
+        existing = D(inputs.existing_balances.get(VehicleKey.SEC_529, 0))
+        balance = existing
         cumulative_contributions = ZERO
         cumulative_state_benefit = ZERO
         yearly: list[YearlyRow] = []
@@ -186,6 +190,17 @@ class Section529Strategy(Strategy):
                 f"5-year forward election (§529(c)(2)(B)) elected — year 1 gift treated "
                 f"as made ratably over 5 years for annual exclusion purposes."
             )
+        if existing > ZERO:
+            assumptions.append(
+                f"Starting corpus: ${existing:,.0f} of existing 529 balance seeded at year 0; "
+                f"continues compounding tax-free under §529(c)(1)."
+            )
+        if inputs.elect_skip_generation:
+            assumptions.append(
+                "Direct-skip 529 gifts to a grandchild qualify for the §2503(b) annual exclusion "
+                "and can be sheltered by GST exemption allocation under §2632 — MVP treats these "
+                "as fully sheltered, so no incremental GST tax is shown."
+            )
 
         if annual_contribution_requested > annual_exclusion and not inputs.elect_529_five_year:
             warnings.append(
@@ -193,6 +208,14 @@ class Section529Strategy(Strategy):
                 f"exclusion ${annual_exclusion:,.0f}. Consider electing the §529(c)(2)(B) "
                 f"five-year forward election to avoid using lifetime exemption."
             )
+
+        rationales = {
+            "state_income": (
+                f"Negative number = state income-tax benefit. The {regime.name} 529 deduction "
+                f"(cap ${state_deductible:,.0f}/yr while contributions are active) saves the "
+                f"donor approximately {state_marginal * 100:.2f}% of each deductible dollar."
+            ),
+        }
 
         return StrategyResult(
             strategy_name=self.name,
@@ -205,4 +228,5 @@ class Section529Strategy(Strategy):
             citations=citations,
             assumptions=assumptions,
             warnings=warnings,
+            tax_explanations=build_tax_explanations(breakdown, rationales),
         )

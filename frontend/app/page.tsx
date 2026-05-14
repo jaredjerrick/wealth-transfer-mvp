@@ -7,6 +7,8 @@ import { AccumulationChart } from "../components/AccumulationChart";
 import { TaxDragWaterfall } from "../components/TaxDragWaterfall";
 import { TradeoffMatrix } from "../components/TradeoffMatrix";
 import { RecommendationsPanel } from "../components/RecommendationsPanel";
+import { TaxExplanations } from "../components/TaxExplanations";
+import { MoreInformation } from "../components/MoreInformation";
 import { compareStrategies, downloadPdf, fetchRulesVersion } from "../lib/api";
 import type { CompareResultDto, DonorInputsPayload } from "../lib/types";
 
@@ -17,8 +19,12 @@ const DEFAULTS: DonorInputsPayload = {
   state: "NY",
   donor_net_worth: "5000000",
   spouse_present: true,
+  num_children: 1,
+  planned_retirement_age: 65,
   child_age: 5,
   child_earned_income: "5000",
+  child_expects_college: true,
+  existing_balances: {},
   investment_horizon_years: 18,
   annual_contribution: "19000",
   expected_pretax_return: "0.07",
@@ -26,6 +32,13 @@ const DEFAULTS: DonorInputsPayload = {
   elect_529_five_year: false,
   elect_gift_splitting: false,
   charitable_bequest_pct: "0",
+  elect_skip_generation: false,
+  plan_pay_college: true,
+  plan_pay_wedding: false,
+  plan_pay_first_home: false,
+  est_college_cost_today: "150000",
+  est_wedding_cost_today: "35000",
+  est_first_home_help_today: "75000",
 };
 
 export default function Page() {
@@ -120,6 +133,7 @@ export default function Page() {
             <>
               <ComparisonTable data={result} />
               <RecommendationsPanel data={result} />
+              <TaxExplanations data={result} />
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                 <AccumulationChart data={result} />
                 <TaxDragWaterfall data={result} />
@@ -127,6 +141,7 @@ export default function Page() {
               <TradeoffMatrix data={result} />
             </>
           )}
+          <MoreInformation />
         </div>
       </main>
 

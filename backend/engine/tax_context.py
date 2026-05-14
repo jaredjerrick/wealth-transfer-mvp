@@ -302,6 +302,38 @@ class TaxContext:
         tax += remaining * parent_marginal
         return round_cents(tax), cites
 
+    # ----- GST (generation-skipping transfer) tax -----
+
+    @property
+    def gst_top_rate(self) -> Decimal:
+        """GST tax rate is the maximum federal estate-tax rate (§2641)."""
+        brackets = self.federal["estate_tax"]["rate_schedule"]["brackets"]
+        return max((D(b["rate"]) for b in brackets), default=D("0.40"))
+
+    def apply_gst(
+        self,
+        taxable_transfer: Decimal,
+        gst_exemption_remaining: Optional[Decimal] = None,
+    ) -> tuple[Decimal, Decimal, list[Citation]]:
+        """Compute GST tax on a transfer to a skip person.
+
+        Allocates remaining GST exemption (§2631) first; any excess is taxed at
+        the §2641 maximum rate. Returns (gst_tax_due, exemption_remaining_after,
+        citations).
+        """
+        cites = [CITATIONS["gst_exemption"], CITATIONS["skip_person"], CITATIONS["gst_rate"]]
+        if taxable_transfer <= ZERO:
+            remaining = gst_exemption_remaining if gst_exemption_remaining is not None else self.gst_exemption
+            return ZERO, remaining, cites
+
+        remaining = gst_exemption_remaining if gst_exemption_remaining is not None else self.gst_exemption
+        sheltered = min(taxable_transfer, remaining)
+        remaining -= sheltered
+        excess = taxable_transfer - sheltered
+        if excess <= ZERO:
+            return ZERO, remaining, cites
+        return round_cents(excess * self.gst_top_rate), remaining, cites
+
     # ----- portability / marital -----
 
     def applicable_exclusion_with_portability(self) -> Decimal:

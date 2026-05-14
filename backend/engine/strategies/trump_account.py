@@ -32,6 +32,8 @@ from ..inputs import DonorInputs
 from ..regimes.base import StateRegime
 from ..tax_context import D, ZERO, TaxContext, round_cents
 from .base import Strategy, StrategyResult, YearlyRow
+from .explain import build_tax_explanations
+from ..inputs import VehicleKey
 
 
 # Birth year window for the federal seed (per OBBBA pilot).
@@ -77,8 +79,9 @@ class TrumpAccountStrategy(Strategy):
         seed_eligible = seed_start <= child_birth_year <= seed_end
 
         # ----- Accumulation (tax-deferred) -----
-        balance = ZERO
-        cost_basis = ZERO  # tracks after-tax contributions for basis recovery at distribution
+        existing = D(inputs.existing_balances.get(VehicleKey.TRUMP, 0))
+        balance = existing
+        cost_basis = existing  # treat existing balance as fully basis-bearing
         contributions_to_date = ZERO
 
         if seed_eligible:
@@ -191,6 +194,19 @@ class TrumpAccountStrategy(Strategy):
                 f"excess assumed redirected to another vehicle (not modeled in this strategy's corpus)."
             )
 
+        if existing > ZERO:
+            assumptions.append(
+                f"Starting corpus: ${existing:,.0f} of existing Trump Account balance seeded at year 0."
+            )
+
+        rationales = {
+            "income": (
+                f"Ordinary income tax on the earnings portion at the beneficiary's marginal rate "
+                f"(proxied at {BENEFICIARY_MARGINAL * 100:.0f}% in MVP) under OBBBA §70404(g)."
+            ),
+            "state_income": f"{regime.name} state income tax on the earnings portion of the distribution.",
+        }
+
         return StrategyResult(
             strategy_name=self.name,
             contribution_total=round_cents(contributions_to_date),
@@ -202,4 +218,5 @@ class TrumpAccountStrategy(Strategy):
             citations=citations,
             assumptions=assumptions,
             warnings=warnings,
+            tax_explanations=build_tax_explanations(breakdown, rationales),
         )

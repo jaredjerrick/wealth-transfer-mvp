@@ -26,6 +26,8 @@ from ..inputs import DonorInputs
 from ..regimes.base import StateRegime
 from ..tax_context import D, ZERO, TaxContext, round_cents
 from .base import Strategy, StrategyResult, YearlyRow
+from .explain import build_tax_explanations
+from ..inputs import VehicleKey
 
 
 class TaxableBrokerageStrategy(Strategy):
@@ -52,8 +54,14 @@ class TaxableBrokerageStrategy(Strategy):
         niit_rate = ctx.niit_rate_applies(donor_agi)
 
         # ----- accumulation loop -----
-        balance = ZERO
-        cost_basis = ZERO
+        # Seed any existing balance the user already has in this vehicle.
+        # Existing balances are treated as having full basis (the simplest
+        # honest assumption for the MVP; the user may have already paid tax on
+        # them or accumulated unrealized appreciation — we surface this as an
+        # assumption).
+        existing = D(inputs.existing_balances.get(VehicleKey.TAXABLE, 0))
+        balance = existing
+        cost_basis = existing
         contributions_to_date = ZERO
         cumulative_income_tax = ZERO
         cumulative_state_income_tax = ZERO
@@ -175,17 +183,30 @@ class TaxableBrokerageStrategy(Strategy):
         )
         state_estate_on_slice = state_estate_result.state_estate_tax * slice_share
 
+        # ----- GST overlay (§§2611, 2631, 2641) -----
+        # If the user elected to skip a generation, the slice flowing to a
+        # grandchild faces GST tax on top of estate tax (after the §2010
+        # unified credit and any remaining §2631 GST exemption).
+        gst_on_slice = ZERO
+        gst_cites: list = []
+        if inputs.elect_skip_generation:
+            net_after_estate = pretax_terminal - federal_estate_on_slice - state_estate_on_slice
+            gst_on_slice, _, gst_cites = ctx.apply_gst(net_after_estate)
+
         # ----- after-tax to recipient -----
         # Step-up means recipient inherits at pretax_terminal as basis. Selling
         # immediately produces zero capital gains. So the §1014 path is:
-        # heir receives pretax_terminal − federal_estate_tax_on_slice − state_estate_on_slice.
-        after_tax_to_recipient = pretax_terminal - federal_estate_on_slice - state_estate_on_slice
+        # heir receives pretax_terminal − federal_estate_tax_on_slice − state_estate_on_slice − gst.
+        after_tax_to_recipient = (
+            pretax_terminal - federal_estate_on_slice - state_estate_on_slice - gst_on_slice
+        )
 
         # ----- assemble result -----
         breakdown = self._empty_breakdown()
         breakdown["income"] = round_cents(cumulative_income_tax)
         breakdown["capital_gains"] = round_cents(cumulative_cap_gains_tax)
         breakdown["estate"] = round_cents(federal_estate_on_slice)
+        breakdown["gst"] = round_cents(gst_on_slice)
         breakdown["state_income"] = round_cents(cumulative_state_income_tax)
         breakdown["state_estate"] = round_cents(state_estate_on_slice)
 
@@ -203,6 +224,8 @@ class TaxableBrokerageStrategy(Strategy):
             citations.append(CITATIONS["community_property_double_step_up"])
         if niit_rate > ZERO:
             citations.append(CITATIONS["niit"])
+        if gst_on_slice > ZERO:
+            citations.extend(gst_cites)
 
         assumptions = [
             f"Pre-tax return {r * 100:.2f}%/yr, dividend yield "
@@ -227,6 +250,44 @@ class TaxableBrokerageStrategy(Strategy):
 
         etr = self._effective_tax_rate(breakdown, contributions_to_date, pretax_terminal)
 
+        rationales = {
+            "income": (
+                f"Donor's ordinary federal rate (~{ordinary_marginal * 100:.1f}%) is applied "
+                f"each year to non-qualified dividends, short-term gains, and NIIT (§1411) once "
+                f"AGI crosses the threshold. Compounds over the {horizon}-year horizon."
+            ),
+            "capital_gains": (
+                f"Preferential federal rate ({ltcg_rate * 100:.0f}%) on qualified dividends and "
+                f"realized long-term gains from portfolio turnover ({turnover * 100:.0f}%/yr)."
+            ),
+            "estate": (
+                f"Pro-rata slice of the federal estate tax on a taxable estate of "
+                f"${round_cents(taxable_estate):,.0f} after the §2010 unified credit "
+                f"(${applicable_exclusion:,.0f}). Strategy's slice share = "
+                f"{(slice_share * 100):.1f}% of the gross estate."
+            ),
+            "state_income": f"State income / capital-gains tax assessed under the {regime.name} regime.",
+            "state_estate": f"Pro-rata slice of the {regime.name} state estate tax.",
+            "gst": (
+                "Generation-skipping transfer tax: recipient is a skip person (e.g., grandchild). "
+                f"Tax = max federal rate ({ctx.gst_top_rate * 100:.0f}%) on the portion of the "
+                f"transfer in excess of the donor's remaining §2631 GST exemption "
+                f"(${ctx.gst_exemption:,.0f} for 2025)."
+            ),
+        }
+
+        if existing > ZERO:
+            assumptions.append(
+                f"Starting corpus: ${existing:,.0f} of existing taxable-brokerage balance "
+                f"seeded at full basis (assumed previously taxed). Adjust if you have material "
+                f"embedded gains."
+            )
+        if inputs.elect_skip_generation:
+            assumptions.append(
+                "Recipient designated as a skip person — GST tax (§§2611, 2631, 2641) applied "
+                "on top of estate tax."
+            )
+
         return StrategyResult(
             strategy_name=self.name,
             contribution_total=round_cents(contributions_to_date),
@@ -238,4 +299,5 @@ class TaxableBrokerageStrategy(Strategy):
             citations=citations,
             assumptions=assumptions,
             warnings=warnings,
+            tax_explanations=build_tax_explanations(breakdown, rationales),
         )

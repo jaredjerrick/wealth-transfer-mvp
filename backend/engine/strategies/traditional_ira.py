@@ -25,6 +25,8 @@ from ..inputs import DonorInputs
 from ..regimes.base import StateRegime
 from ..tax_context import D, ZERO, TaxContext, round_cents
 from .base import Strategy, StrategyResult, YearlyRow
+from .explain import build_tax_explanations
+from ..inputs import VehicleKey
 
 
 class TraditionalIRAStrategy(Strategy):
@@ -64,7 +66,8 @@ class TraditionalIRAStrategy(Strategy):
         horizon = inputs.investment_horizon_years
         r = D(inputs.expected_pretax_return)
 
-        balance = ZERO
+        existing = D(inputs.existing_balances.get(VehicleKey.TRAD_IRA, 0))
+        balance = existing
         contributions_to_date = ZERO
         yearly: list[YearlyRow] = []
 
@@ -124,6 +127,20 @@ class TraditionalIRAStrategy(Strategy):
                 f"not modeled in this strategy's corpus."
             )
 
+        if existing > ZERO:
+            assumptions.append(
+                f"Starting corpus: ${existing:,.0f} of existing Traditional IRA balance seeded at year 0."
+            )
+
+        rationales = {
+            "income": (
+                f"Embedded ordinary-income tax (IRD, §691) — there is no §1014 step-up on a Traditional IRA. "
+                f"Recipient's ordinary federal rate is proxied at the donor's marginal "
+                f"({donor_marginal * 100:.1f}%)."
+            ),
+            "state_income": f"{regime.name} state income tax on the distribution.",
+        }
+
         return StrategyResult(
             strategy_name=self.name,
             contribution_total=round_cents(contributions_to_date),
@@ -135,4 +152,5 @@ class TraditionalIRAStrategy(Strategy):
             citations=citations,
             assumptions=assumptions,
             warnings=warnings,
+            tax_explanations=build_tax_explanations(breakdown, rationales),
         )
