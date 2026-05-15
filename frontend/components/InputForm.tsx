@@ -123,7 +123,15 @@ export function InputForm({ initial, onSubmit, loading }: Props) {
   }
 
   return (
-    <form onSubmit={submit} className="bg-white border border-slate-200 rounded-lg p-6 space-y-5">
+    // overflow-hidden defensively clips anything escaping the form's box; the
+    // grid-row `min-w-0` further down ensures the inner allocation grid can
+    // shrink to fit. Together with the page-level grid's `min-w-0`, this
+    // prevents the form column from visually invading the results column on
+    // narrow desktop viewports.
+    <form
+      onSubmit={submit}
+      className="bg-white border border-slate-200 rounded-lg p-6 space-y-5 overflow-hidden break-words"
+    >
       <h2 className="text-lg font-semibold text-ink">Planning inputs</h2>
 
       {/* ===== Donor profile ===== */}
@@ -339,13 +347,21 @@ export function InputForm({ initial, onSubmit, loading }: Props) {
         {allocation.length > 0 && (
           <div className="space-y-1">
             {allocation.map((row, i) => (
-              <div key={i} className="grid grid-cols-[1fr_auto_auto] gap-2 items-center">
+              // `minmax(0,1fr)` replaces the implicit `min-content` floor that
+              // CSS Grid applies to the 1fr track. Without it, the select's
+              // intrinsic min-width (widest option) can force the whole grid
+              // wider than its column. `min-w-0` on the select belt-and-
+              // suspenders the same thing.
+              <div
+                key={i}
+                className="grid grid-cols-[minmax(0,1fr)_auto_auto] gap-2 items-center"
+              >
                 <select
                   value={row.vehicle}
                   onChange={(e) =>
                     updateAllocationRow(i, { vehicle: e.target.value as VehicleKey })
                   }
-                  className="text-sm rounded border border-slate-300 px-2 py-1 bg-white"
+                  className="min-w-0 text-sm rounded border border-slate-300 px-2 py-1 bg-white"
                 >
                   {VEHICLES.map((veh) => (
                     <option key={veh.key} value={veh.key}>
