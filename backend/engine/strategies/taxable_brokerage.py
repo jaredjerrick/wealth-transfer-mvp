@@ -272,7 +272,7 @@ class TaxableBrokerageStrategy(Strategy):
                 "Generation-skipping transfer tax: recipient is a skip person (e.g., grandchild). "
                 f"Tax = max federal rate ({ctx.gst_top_rate * 100:.0f}%) on the portion of the "
                 f"transfer in excess of the donor's remaining §2631 GST exemption "
-                f"(${ctx.gst_exemption:,.0f} for 2025)."
+                f"(${ctx.gst_exemption:,.0f} for {ctx.tax_year})."
             ),
         }
 

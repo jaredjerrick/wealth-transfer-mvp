@@ -80,7 +80,7 @@ class NYRegime(StateRegime):
         cites = [CITATIONS["ny_estate_cliff"]]
         warnings: list[str] = []
 
-        cliff_threshold = exemption * cliff_multiplier  # $7.518M (2025)
+        cliff_threshold = exemption * cliff_multiplier  # 1.05 × NY BEA (e.g. $7.7175M for 2026)
         brackets = ny_estate["rate_schedule"]
 
         if ny_taxable_estate <= exemption:

@@ -2,7 +2,7 @@
 
 Lifecycle:
   1. Child must have earned income (§408A(c)(2)). Contribution limited to lesser
-     of IRA limit ($7,000 for 2025) or earned income.
+     of IRA limit (sourced from the loaded rules file) or earned income.
   2. Contribution is a gift (§2511); §2503(b) annual exclusion applies.
   3. Tax-free growth.
   4. Qualified distributions tax-free under §408A(d) (5-year holding + age 59½
@@ -113,8 +113,8 @@ class RothIRAStrategy(Strategy):
         if D(inputs.annual_contribution) > ctx.ira_limit:
             warnings.append(
                 f"Annual contribution input (${inputs.annual_contribution:,.0f}) exceeds "
-                f"the IRA limit ($7,000 for 2025). Excess assumed redirected elsewhere — "
-                f"not modeled in this strategy's corpus."
+                f"the IRA limit (${ctx.ira_limit:,.0f} for {ctx.tax_year}). Excess assumed "
+                f"redirected elsewhere — not modeled in this strategy's corpus."
             )
         if D(inputs.annual_contribution) > D(inputs.child_earned_income):
             warnings.append(

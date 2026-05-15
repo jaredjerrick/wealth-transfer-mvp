@@ -112,7 +112,11 @@ export default function Page() {
       </header>
 
       <main className="max-w-7xl mx-auto px-6 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-4 space-y-4">
+        {/* `min-w-0` is required on both grid children: CSS Grid items default
+            to min-width:auto, which allows long unbreakable content (preset
+            descriptions, warning card text) to push a column wider than its
+            col-span slot — visually overlapping the adjacent column. */}
+        <div className="lg:col-span-4 min-w-0 space-y-4">
           <InputForm initial={DEFAULTS} onSubmit={onSubmit} loading={loading} />
           {error && (
             <div className="bg-red-50 border border-red-200 rounded p-3 text-sm text-red-800">
@@ -121,7 +125,7 @@ export default function Page() {
           )}
         </div>
 
-        <div className="lg:col-span-8 space-y-6">
+        <div className="lg:col-span-8 min-w-0 space-y-6">
           {!result && !loading && (
             <div className="bg-white border border-slate-200 rounded-lg p-8 text-center text-muted text-sm">
               Enter planning inputs and click <span className="font-medium">Compare strategies</span>.

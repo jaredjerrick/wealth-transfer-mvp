@@ -5,8 +5,9 @@ Lifecycle:
      exclusion applies.
   2. Account is in the child's name with a custodian. Income on account is
      taxable to the child.
-  3. Kiddie tax (§1(g)): unearned income > $2,700 (2025) is taxed at the parent's
-     marginal rate until the child turns 19 (24 if full-time student).
+  3. Kiddie tax (§1(g)): unearned income > $2,700 (sourced from the loaded rules
+     file) is taxed at the parent's marginal rate until the child turns 19
+     (24 if full-time student).
   4. If the donor serves as custodian and dies before age of majority, §2038
      pulls the account back into the donor's estate.
   5. At the state UTMA age of majority (NY 21, IL 21, TX 21), control transfers

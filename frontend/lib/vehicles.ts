@@ -48,7 +48,7 @@ export const VEHICLES: VehicleInfo[] = [
     shortLabel: "Roth IRA",
     ircSection: "IRC §408A",
     annualCap:
-      "Lesser of $7,000 (2025) or the child's earned income. Requires the child to have W-2 or self-employment income under §408A(c)(2).",
+      "Lesser of $7,500 (2026, under-50 limit per IRS Notice 2025-67) or the child's earned income. Requires the child to have W-2 or self-employment income under §408A(c)(2).",
     taxTreatment:
       "Funded with after-tax dollars. Growth and qualified withdrawals are federal-income-tax-free.",
     contributionTax: "After-tax — no upfront deduction.",
@@ -68,7 +68,7 @@ export const VEHICLES: VehicleInfo[] = [
     shortLabel: "Trad IRA",
     ircSection: "IRC §408 / §219",
     annualCap:
-      "Lesser of $7,000 (2025) or the child's earned income. Requires the child to have earned income under §219(b).",
+      "Lesser of $7,500 (2026, under-50 limit per IRS Notice 2025-67) or the child's earned income. Requires the child to have earned income under §219(b).",
     taxTreatment:
       "Tax-deductible contributions, tax-deferred growth, ordinary income tax on distributions.",
     contributionTax:
@@ -89,7 +89,7 @@ export const VEHICLES: VehicleInfo[] = [
     shortLabel: "UGMA/UTMA",
     ircSection: "State UGMA/UTMA acts; IRC §1(g) kiddie tax",
     annualCap:
-      "No federal cap; contributions use the §2503(b) annual exclusion ($19,000/donor/donee for 2025).",
+      "No federal cap; contributions use the §2503(b) annual exclusion ($19,000/donor/donee for 2026).",
     taxTreatment:
       "Custodial brokerage account held in the child's name. Income on the account is the child's, subject to the kiddie tax (§1(g)).",
     contributionTax:

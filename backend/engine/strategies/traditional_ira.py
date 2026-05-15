@@ -2,7 +2,7 @@
 
 Lifecycle:
   1. Child must have earned income (§219(b)). Contribution limited to lesser of
-     IRA limit ($7,000 for 2025) or earned income.
+     IRA limit (sourced from the loaded rules file) or earned income.
   2. Contribution is a gift to the child (§2511); §2503(b) annual exclusion
      applies. Child gets the §219 deduction on their own return (small benefit
      given typical young-adult AGI).
@@ -123,8 +123,8 @@ class TraditionalIRAStrategy(Strategy):
         if D(inputs.annual_contribution) > ctx.ira_limit:
             warnings.append(
                 f"Annual contribution input (${inputs.annual_contribution:,.0f}) exceeds "
-                f"the IRA limit ($7,000 for 2025). Excess assumed redirected elsewhere — "
-                f"not modeled in this strategy's corpus."
+                f"the IRA limit (${ctx.ira_limit:,.0f} for {ctx.tax_year}). Excess assumed "
+                f"redirected elsewhere — not modeled in this strategy's corpus."
             )
 
         if existing > ZERO:

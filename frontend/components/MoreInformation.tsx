@@ -239,7 +239,7 @@ function LifeEventsPanel() {
         <p>
           §2503(e) <em>does not</em> cover weddings &mdash; that section is limited to
           tuition and medical expenses paid directly to the provider. Plan to use the
-          §2503(b) annual exclusion ($19,000/donor/donee for 2025), or dip into the §2010
+          §2503(b) annual exclusion ($19,000/donor/donee for 2026), or dip into the §2010
           lifetime exemption. UTMA assets can also be used once the child reaches the age
           of majority (21 in NY / IL / TX).
         </p>

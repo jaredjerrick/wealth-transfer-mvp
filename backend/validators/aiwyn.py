@@ -45,7 +45,7 @@ def _cache_key(payload: dict) -> str:
 def _build_aiwyn_payload(donor_inputs_dict: dict) -> dict:
     """Build the `calculate_tax` payload from our DonorInputs dict."""
     return {
-        "tax_year": donor_inputs_dict.get("tax_year", 2025),
+        "tax_year": donor_inputs_dict.get("tax_year", 2026),
         "jurisdiction": donor_inputs_dict["state"],
         "filing_status": donor_inputs_dict["filing_status"],
         "agi_bucket": _agi_bucket(Decimal(donor_inputs_dict["donor_gross_income_agi"])),
