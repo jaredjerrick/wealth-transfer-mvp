@@ -164,6 +164,10 @@ def _build_recommendations(
         )
 
     # ---- Retirement: Roth blocking ----
+    # Promoted from low → normal: unblocking the Roth path (by the child earning
+    # income from a W-2 or self-employment) typically changes the best-strategy
+    # outcome by tens of thousands of dollars on long horizons. Worth a
+    # standard-priority card so parents notice the lever they can pull.
     if inputs.child_earned_income <= Decimal("0"):
         recs.append(
             Recommendation(
@@ -173,7 +177,7 @@ def _build_recommendations(
                     "tax-efficient long-horizon vehicle on a per-dollar basis."
                 ),
                 category=CATEGORY_RETIREMENT,
-                priority=PRIORITY_LOW,
+                priority=PRIORITY_NORMAL,
             )
         )
 

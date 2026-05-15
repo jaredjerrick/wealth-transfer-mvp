@@ -131,6 +131,13 @@ class DiversifiedPortfolioStrategy(Strategy):
         assumptions: list[str] = ["Composite of the individual-vehicle strategies, summed."]
         warnings: list[str] = []
         explanations: list[TaxExplanation] = []
+        # Track which vehicles contributed inherited warnings so we can emit
+        # a single summary line at the end pointing users to the individual
+        # strategy rows (where those warnings are already visible). This
+        # replaces the previous behavior of forwarding every constituent
+        # warning prefixed with [vehicle_key], which produced near-duplicates
+        # of the warnings already shown on the standalone strategy rows.
+        vehicles_with_warnings: dict[str, int] = {}
         for item, res in per_vehicle_results:
             if not res.is_available:
                 warnings.append(
@@ -147,9 +154,8 @@ class DiversifiedPortfolioStrategy(Strategy):
             assumptions.extend(
                 f"[{item.vehicle.value}] {a}" for a in res.assumptions
             )
-            warnings.extend(
-                f"[{item.vehicle.value}] {w}" for w in res.warnings
-            )
+            if res.warnings:
+                vehicles_with_warnings[item.vehicle.value] = len(res.warnings)
             for ex in res.tax_explanations:
                 explanations.append(
                     TaxExplanation(
@@ -159,6 +165,19 @@ class DiversifiedPortfolioStrategy(Strategy):
                         rationale=ex.rationale,
                     )
                 )
+
+        # Emit one summary line pointing to the constituent strategy rows,
+        # if any of them had warnings of their own.
+        if vehicles_with_warnings:
+            total_inherited = sum(vehicles_with_warnings.values())
+            vehicle_list = ", ".join(sorted(vehicles_with_warnings.keys()))
+            warnings.append(
+                f"This composite inherits {total_inherited} warning"
+                f"{'s' if total_inherited != 1 else ''} from its constituent "
+                f"strategies ({vehicle_list}). See those individual strategy "
+                f"rows above for full detail — not re-emitted here to keep "
+                f"the warning list scannable."
+            )
 
         # Build a synthetic year-by-year projection by summing the per-vehicle
         # pretax_balance per year. This gives the user a single accumulation

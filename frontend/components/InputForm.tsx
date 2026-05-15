@@ -125,7 +125,7 @@ export function InputForm({ initial, onSubmit, loading }: Props) {
   return (
     <form
       onSubmit={submit}
-      className="bg-white border border-slate-200 rounded-lg p-6 space-y-5"
+      className="bg-white border border-slate-200 rounded-lg p-4 sm:p-6 space-y-5"
     >
       <h2 className="text-lg font-semibold text-ink">Planning inputs</h2>
 
@@ -490,13 +490,22 @@ export function InputForm({ initial, onSubmit, loading }: Props) {
         </label>
       </fieldset>
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full bg-accent text-white font-medium rounded-md py-2.5 hover:bg-accent-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-      >
-        {loading ? "Computing…" : "Compare strategies"}
-      </button>
+      {/* Sticky-to-viewport-bottom submit. The container has -mx-6 -mb-6 to
+          extend to the form's edges (negating the form's p-6 padding), with
+          its own px-6 py-3 + backdrop blur so the button always reads as a
+          floating CTA over whatever form content scrolls behind it. This is
+          critical on phones where the form is tall and the user shouldn't
+          have to scroll back down to find Compare strategies after editing
+          any field. */}
+      <div className="sticky bottom-0 -mx-4 sm:-mx-6 -mb-4 sm:-mb-6 mt-4 bg-white/95 supports-[backdrop-filter]:bg-white/75 supports-[backdrop-filter]:backdrop-blur border-t border-slate-200 px-4 sm:px-6 py-3 rounded-b-lg">
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-accent text-white font-medium rounded-md py-2.5 hover:bg-accent-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          {loading ? "Computing…" : "Compare strategies"}
+        </button>
+      </div>
     </form>
   );
 }

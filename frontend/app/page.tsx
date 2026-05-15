@@ -91,27 +91,32 @@ export default function Page() {
   return (
     <div className="min-h-screen">
       <header className="bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-semibold text-ink">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <h1 className="text-lg sm:text-xl font-semibold text-ink leading-tight">
               Wealth Transfer Strategy Comparison
             </h1>
-            <p className="text-xs text-muted mt-0.5">
+            <p className="text-xs text-muted mt-0.5 hidden sm:block">
               Educational model · not tax or legal advice · every number traces to an IRC citation
+            </p>
+            <p className="text-[11px] text-muted mt-0.5 sm:hidden">
+              Educational model · not tax/legal advice
             </p>
           </div>
           {result && (
             <button
               onClick={onPdf}
-              className="text-sm bg-accent text-white px-3 py-1.5 rounded-md hover:bg-accent-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-ring focus-visible:ring-offset-2 transition-colors"
+              className="shrink-0 text-sm bg-accent text-white px-3 py-1.5 rounded-md hover:bg-accent-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-ring focus-visible:ring-offset-2 transition-colors"
+              aria-label="Download Strategy Brief PDF"
             >
-              Download Strategy Brief (PDF)
+              <span className="hidden sm:inline">Download Strategy Brief (PDF)</span>
+              <span className="sm:hidden">PDF</span>
             </button>
           )}
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-6 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
         {/* `min-w-0` is required on both grid children: CSS Grid items default
             to min-width:auto, which allows long unbreakable content (preset
             descriptions, warning card text) to push a column wider than its
@@ -130,7 +135,9 @@ export default function Page() {
             <div className="bg-white border border-slate-200 rounded-lg p-8 text-center text-muted text-sm">
               Enter planning inputs and click <span className="font-medium">Compare strategies</span>.
               <br />
-              All six vehicles will be modeled across the federal and state regime for {payload.state}.
+              Seven tax-advantaged vehicles (529, Roth IRA, Traditional IRA, UGMA/UTMA, Trump
+              Account, Taxable Brokerage, Hold-Until-Death) plus an optional Diversified Portfolio
+              composite, all modeled across the federal and {payload.state} state regime.
             </div>
           )}
           {result && (
@@ -150,7 +157,7 @@ export default function Page() {
       </main>
 
       <footer className="border-t border-slate-200 bg-white mt-10">
-        <div className="max-w-7xl mx-auto px-6 py-3 text-xs text-muted flex flex-wrap justify-between items-center gap-2">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 text-xs text-muted flex flex-wrap justify-between items-center gap-2">
           <div>
             Rules version:{" "}
             {rulesVersion

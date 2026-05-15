@@ -43,25 +43,31 @@ export function ComparisonTable({ data }: Props) {
       )}
 
       {/* Full numeric comparison — kept as a table because tables remain the
-          best tool for scannable side-by-side numbers across many rows. */}
-      <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
-        <div className="px-4 py-3 border-b border-slate-200">
-          <h3 className="font-semibold text-ink">Strategy comparison (full detail)</h3>
-          <p className="text-xs text-muted mt-1">
-            Sorted by after-tax wealth to recipient. Every dollar traces to the cited authority —
-            click the §.
-          </p>
-        </div>
+          best tool for scannable side-by-side numbers across many rows. On
+          mobile (<sm), wrap in a <details> so phone users don't drown in a
+          6-column table; the top-3 cards above already cover the essentials. */}
+      <details open className="bg-white border border-slate-200 rounded-lg overflow-hidden group">
+        <summary className="px-4 py-3 border-b border-slate-200 cursor-pointer list-none flex items-center justify-between hover:bg-slate-50">
+          <div>
+            <h3 className="font-semibold text-ink">Strategy comparison (full detail)</h3>
+            <p className="text-xs text-muted mt-1">
+              All strategies, sorted by after-tax wealth. Click § for the controlling authority.
+            </p>
+          </div>
+          <span className="text-xs text-muted shrink-0 ml-3 group-open:rotate-180 transition-transform" aria-hidden="true">
+            ▼
+          </span>
+        </summary>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-slate-50 text-xs uppercase text-muted">
               <tr>
-                <th className="text-left px-4 py-2">Strategy</th>
-                <th className="text-right px-4 py-2">Contributions</th>
-                <th className="text-right px-4 py-2">Pretax terminal</th>
-                <th className="text-right px-4 py-2">Total tax</th>
-                <th className="text-right px-4 py-2">After-tax to heir</th>
-                <th className="text-right px-4 py-2">ETR</th>
+                <th className="text-left px-3 sm:px-4 py-2">Strategy</th>
+                <th className="text-right px-3 sm:px-4 py-2 hidden sm:table-cell">Contributions</th>
+                <th className="text-right px-3 sm:px-4 py-2 hidden md:table-cell">Pretax terminal</th>
+                <th className="text-right px-3 sm:px-4 py-2 hidden md:table-cell">Total tax</th>
+                <th className="text-right px-3 sm:px-4 py-2">After-tax to heir</th>
+                <th className="text-right px-3 sm:px-4 py-2">ETR</th>
               </tr>
             </thead>
             <tbody>
@@ -71,7 +77,7 @@ export function ComparisonTable({ data }: Props) {
             </tbody>
           </table>
         </div>
-      </div>
+      </details>
 
       {/* Unavailable strategies as cards instead of a bullet list. */}
       {blocked.length > 0 && (
@@ -206,23 +212,27 @@ function StrategyRow({ r, highlight }: { r: StrategyResultDto; highlight: boolea
   );
   return (
     <tr className={highlight ? "bg-accent-soft/40" : "border-t border-slate-100"}>
-      <td className="px-4 py-2 font-medium">
+      <td className="px-3 sm:px-4 py-2 font-medium">
         {r.strategy_name}
         <CitationFootnote citations={r.citations} />
       </td>
-      <td className="text-right px-4 py-2 tabular-nums">{formatMoney(r.contribution_total)}</td>
-      <td className="text-right px-4 py-2 tabular-nums">
+      <td className="text-right px-3 sm:px-4 py-2 tabular-nums hidden sm:table-cell">
+        {formatMoney(r.contribution_total)}
+      </td>
+      <td className="text-right px-3 sm:px-4 py-2 tabular-nums hidden md:table-cell">
         {formatMoney(r.pretax_terminal_value)}
       </td>
-      <td className="text-right px-4 py-2 tabular-nums">{formatMoney(totalTax)}</td>
+      <td className="text-right px-3 sm:px-4 py-2 tabular-nums hidden md:table-cell">
+        {formatMoney(totalTax)}
+      </td>
       <td
-        className={`text-right px-4 py-2 tabular-nums font-semibold ${
+        className={`text-right px-3 sm:px-4 py-2 tabular-nums font-semibold ${
           highlight ? "text-accent-hover" : ""
         }`}
       >
         {formatMoney(r.after_tax_wealth_to_recipient)}
       </td>
-      <td className="text-right px-4 py-2 tabular-nums">{formatPercent(r.effective_tax_rate)}</td>
+      <td className="text-right px-3 sm:px-4 py-2 tabular-nums">{formatPercent(r.effective_tax_rate)}</td>
     </tr>
   );
 }
