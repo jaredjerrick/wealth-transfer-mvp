@@ -138,7 +138,11 @@ def test_life_event_recommendations_fire():
         ),
         rules=rules,
     )
-    joined = " ".join(result.recommendations).lower()
+    joined = " ".join(r.message for r in result.recommendations).lower()
     assert "college" in joined
     assert "wedding" in joined
     assert "first home" in joined or "first-home" in joined
+    # Life-event recs should also carry the right category labels.
+    categories = {r.category for r in result.recommendations}
+    assert "Education" in categories
+    assert "Family event" in categories

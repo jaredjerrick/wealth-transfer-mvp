@@ -93,9 +93,32 @@ export interface StrategyResultDto {
   tax_explanations?: TaxExplanation[];
 }
 
+// Mirror of the backend `Recommendation` dataclass. `category` is one of the
+// values listed in engine.py (Estate, Education, Family event, Custodial,
+// Retirement, Step-up, GST, Gifting, Planning). `priority` is "high" | "normal"
+// | "low" — set server-side based on dollar impact of the issue.
+export type RecommendationCategory =
+  | "Estate"
+  | "Education"
+  | "Family event"
+  | "Custodial"
+  | "Retirement"
+  | "Step-up"
+  | "GST"
+  | "Gifting"
+  | "Planning";
+
+export type RecommendationPriority = "high" | "normal" | "low";
+
+export interface RecommendationDto {
+  message: string;
+  category: RecommendationCategory;
+  priority: RecommendationPriority;
+}
+
 export interface CompareResultDto {
   inputs: Record<string, unknown>;
   rules_version: { tax_year: number; last_updated: string; source: string };
   results: StrategyResultDto[];
-  recommendations: string[];
+  recommendations: RecommendationDto[];
 }

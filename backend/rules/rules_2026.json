@@ -1,15 +1,15 @@
 {
-  "tax_year": 2025,
-  "last_updated": "2026-05-12",
-  "source": "IRS Rev. Proc. 2024-40 (federal indexed amounts); state DOR sites for state parameters",
-  "notes": "TCJA estate/gift exemption remains active in 2026 per legislative continuation. No sunset modeled. All values are final published amounts.",
+  "tax_year": 2026,
+  "last_updated": "2026-05-15",
+  "source": "IRS Rev. Proc. 2025-32 (federal indexed amounts for 2026); IRS Notice 2025-67 (2026 retirement contribution limits); OBBBA §§70106, 70404 (Pub. L. 119-21, enacted July 4, 2025); IRS Notice 2025-87 (Trump Account interim guidance); NY DTF and NY Tax Law §952 (2026 indexed NY BEA); IL Attorney General fact sheet for IL estate tax.",
+  "notes": "Full 2026 rules update. Federal §2010(c) unified basic exclusion is $15.0M per individual (set permanently by OBBBA §70106, indexed for inflation thereafter). With timely §2010(c)(2)(B) DSUE portability, married couples have up to $30.0M of combined federal exemption. GST §2631 exemption mirrors the §2010(c) exclusion at $15.0M. Annual gift exclusion (§2503(b)) is $19,000 per donee. Ordinary income brackets, LTCG breakpoints, NIIT thresholds (statutory; unchanged), kiddie tax bands, IRA contribution limit ($7,500 under-50), and the NY estate BEA ($7.35M) all reflect 2026 published values. IL estate exemption remains $4M (statutory, unindexed). TX has no state income or estate tax. Key names in this file are year-agnostic — the file name (rules_<year>.json) is the single source of truth for the tax year these values apply to.",
 
   "federal": {
     "gift_tax": {
       "annual_exclusion_per_donee": {
         "value": 19000,
-        "citation": "IRC §2503(b); Rev. Proc. 2024-40 §3.43",
-        "description": "Annual gift tax exclusion per donee for 2025."
+        "citation": "IRC §2503(b); Rev. Proc. 2025-32 §3.43",
+        "description": "Annual gift tax exclusion per donee for 2026 ($19,000; unchanged from 2025)."
       },
       "gift_splitting": {
         "available": true,
@@ -27,17 +27,17 @@
         "description": "Unlimited gift tax marital deduction for transfers to U.S.-citizen spouse."
       },
       "lifetime_exemption_basic_exclusion": {
-        "value": 13990000,
-        "citation": "IRC §2010(c); Rev. Proc. 2024-40 §3.41",
-        "description": "Basic exclusion amount for gift and estate tax (2025)."
+        "value": 15000000,
+        "citation": "IRC §2010(c); OBBBA §70106 (Pub. L. 119-21); Rev. Proc. 2025-32",
+        "description": "Basic exclusion amount for gift and estate tax (2026). OBBBA permanently increased the unified BEA to $15M starting in tax year 2026 (indexed for inflation thereafter). Cumulative lifetime use of this exclusion is shared between gift and estate tax."
       }
     },
 
     "estate_tax": {
       "basic_exclusion_amount": {
-        "value": 13990000,
-        "citation": "IRC §2010(c); Rev. Proc. 2024-40 §3.41",
-        "description": "Unified credit shelter amount for 2025."
+        "value": 15000000,
+        "citation": "IRC §2010(c); OBBBA §70106 (Pub. L. 119-21); Rev. Proc. 2025-32",
+        "description": "Unified credit shelter amount for 2026 ($15.0M per individual). Combined exclusion for a married couple electing DSUE portability under §2010(c)(2)(B) is therefore $30.0M."
       },
       "portability_dsue": {
         "available": true,
@@ -95,9 +95,9 @@
 
     "gst_tax": {
       "exemption": {
-        "value": 13990000,
-        "citation": "IRC §2631; Rev. Proc. 2024-40",
-        "description": "GST exemption equal to estate/gift basic exclusion for 2025."
+        "value": 15000000,
+        "citation": "IRC §2631; OBBBA §70106; Rev. Proc. 2025-32",
+        "description": "GST exemption equal to the unified §2010(c) basic exclusion for 2026 ($15.0M)."
       },
       "rate": {
         "value": 0.40,
@@ -110,52 +110,53 @@
       }
     },
 
-    "income_tax_2025_ordinary": {
-      "citation": "IRC §1; Rev. Proc. 2024-40 §3.01",
+    "income_tax_ordinary": {
+      "citation": "IRC §1; Rev. Proc. 2025-32 §3.01 (2026 brackets)",
+      "description": "Ordinary income tax brackets for the file's tax_year. base_tax is the cumulative tax at the bracket floor.",
       "single": [
-        {"floor": 0,       "ceiling": 11925,    "rate": 0.10, "base_tax": 0},
-        {"floor": 11925,   "ceiling": 48475,    "rate": 0.12, "base_tax": 1192.50},
-        {"floor": 48475,   "ceiling": 103350,   "rate": 0.22, "base_tax": 5578.50},
-        {"floor": 103350,  "ceiling": 197300,   "rate": 0.24, "base_tax": 17651.00},
-        {"floor": 197300,  "ceiling": 250525,   "rate": 0.32, "base_tax": 40199.00},
-        {"floor": 250525,  "ceiling": 626350,   "rate": 0.35, "base_tax": 57231.00},
-        {"floor": 626350,  "ceiling": null,     "rate": 0.37, "base_tax": 188769.75}
+        {"floor": 0,       "ceiling": 12400,    "rate": 0.10, "base_tax": 0},
+        {"floor": 12400,   "ceiling": 50400,    "rate": 0.12, "base_tax": 1240.00},
+        {"floor": 50400,   "ceiling": 105700,   "rate": 0.22, "base_tax": 5800.00},
+        {"floor": 105700,  "ceiling": 201775,   "rate": 0.24, "base_tax": 17966.00},
+        {"floor": 201775,  "ceiling": 256225,   "rate": 0.32, "base_tax": 41024.00},
+        {"floor": 256225,  "ceiling": 640600,   "rate": 0.35, "base_tax": 58448.00},
+        {"floor": 640600,  "ceiling": null,     "rate": 0.37, "base_tax": 192979.25}
       ],
       "mfj": [
-        {"floor": 0,       "ceiling": 23850,    "rate": 0.10, "base_tax": 0},
-        {"floor": 23850,   "ceiling": 96950,    "rate": 0.12, "base_tax": 2385.00},
-        {"floor": 96950,   "ceiling": 206700,   "rate": 0.22, "base_tax": 11157.00},
-        {"floor": 206700,  "ceiling": 394600,   "rate": 0.24, "base_tax": 35302.00},
-        {"floor": 394600,  "ceiling": 501050,   "rate": 0.32, "base_tax": 80398.00},
-        {"floor": 501050,  "ceiling": 751600,   "rate": 0.35, "base_tax": 114462.00},
-        {"floor": 751600,  "ceiling": null,     "rate": 0.37, "base_tax": 202154.50}
+        {"floor": 0,       "ceiling": 24800,    "rate": 0.10, "base_tax": 0},
+        {"floor": 24800,   "ceiling": 100800,   "rate": 0.12, "base_tax": 2480.00},
+        {"floor": 100800,  "ceiling": 211400,   "rate": 0.22, "base_tax": 11600.00},
+        {"floor": 211400,  "ceiling": 403550,   "rate": 0.24, "base_tax": 35932.00},
+        {"floor": 403550,  "ceiling": 512450,   "rate": 0.32, "base_tax": 82048.00},
+        {"floor": 512450,  "ceiling": 768700,   "rate": 0.35, "base_tax": 116896.00},
+        {"floor": 768700,  "ceiling": null,     "rate": 0.37, "base_tax": 206583.50}
       ],
       "mfs": [
-        {"floor": 0,       "ceiling": 11925,    "rate": 0.10, "base_tax": 0},
-        {"floor": 11925,   "ceiling": 48475,    "rate": 0.12, "base_tax": 1192.50},
-        {"floor": 48475,   "ceiling": 103350,   "rate": 0.22, "base_tax": 5578.50},
-        {"floor": 103350,  "ceiling": 197300,   "rate": 0.24, "base_tax": 17651.00},
-        {"floor": 197300,  "ceiling": 250525,   "rate": 0.32, "base_tax": 40199.00},
-        {"floor": 250525,  "ceiling": 375800,   "rate": 0.35, "base_tax": 57231.00},
-        {"floor": 375800,  "ceiling": null,     "rate": 0.37, "base_tax": 101077.25}
+        {"floor": 0,       "ceiling": 12400,    "rate": 0.10, "base_tax": 0},
+        {"floor": 12400,   "ceiling": 50400,    "rate": 0.12, "base_tax": 1240.00},
+        {"floor": 50400,   "ceiling": 105700,   "rate": 0.22, "base_tax": 5800.00},
+        {"floor": 105700,  "ceiling": 201775,   "rate": 0.24, "base_tax": 17966.00},
+        {"floor": 201775,  "ceiling": 256225,   "rate": 0.32, "base_tax": 41024.00},
+        {"floor": 256225,  "ceiling": 384350,   "rate": 0.35, "base_tax": 58448.00},
+        {"floor": 384350,  "ceiling": null,     "rate": 0.37, "base_tax": 103291.75}
       ],
       "hoh": [
-        {"floor": 0,       "ceiling": 17000,    "rate": 0.10, "base_tax": 0},
-        {"floor": 17000,   "ceiling": 64850,    "rate": 0.12, "base_tax": 1700.00},
-        {"floor": 64850,   "ceiling": 103350,   "rate": 0.22, "base_tax": 7442.00},
-        {"floor": 103350,  "ceiling": 197300,   "rate": 0.24, "base_tax": 15912.00},
-        {"floor": 197300,  "ceiling": 250500,   "rate": 0.32, "base_tax": 38460.00},
-        {"floor": 250500,  "ceiling": 626350,   "rate": 0.35, "base_tax": 55484.00},
-        {"floor": 626350,  "ceiling": null,     "rate": 0.37, "base_tax": 187031.50}
+        {"floor": 0,       "ceiling": 17700,    "rate": 0.10, "base_tax": 0},
+        {"floor": 17700,   "ceiling": 67450,    "rate": 0.12, "base_tax": 1770.00},
+        {"floor": 67450,   "ceiling": 105700,   "rate": 0.22, "base_tax": 7740.00},
+        {"floor": 105700,  "ceiling": 201750,   "rate": 0.24, "base_tax": 16155.00},
+        {"floor": 201750,  "ceiling": 256200,   "rate": 0.32, "base_tax": 39207.00},
+        {"floor": 256200,  "ceiling": 640600,   "rate": 0.35, "base_tax": 56631.00},
+        {"floor": 640600,  "ceiling": null,     "rate": 0.37, "base_tax": 191171.00}
       ]
     },
 
-    "capital_gains_2025_long_term": {
-      "citation": "IRC §1(h); Rev. Proc. 2024-40 §3.03",
-      "description": "Long-term capital gains and qualified dividend rates for 2025.",
+    "capital_gains_long_term": {
+      "citation": "IRC §1(h); Rev. Proc. 2025-32 §3.03 (2026 breakpoints)",
+      "description": "Long-term capital gains and qualified dividend rate breakpoints for the file's tax_year.",
       "single":  [{"floor": 0, "ceiling": 48350,  "rate": 0.00}, {"floor": 48350,  "ceiling": 533400, "rate": 0.15}, {"floor": 533400, "ceiling": null, "rate": 0.20}],
       "mfj":     [{"floor": 0, "ceiling": 96700,  "rate": 0.00}, {"floor": 96700,  "ceiling": 600050, "rate": 0.15}, {"floor": 600050, "ceiling": null, "rate": 0.20}],
-      "mfs":     [{"floor": 0, "ceiling": 48350,  "rate": 0.00}, {"floor": 48350,  "ceiling": 300000, "rate": 0.15}, {"floor": 300000, "ceiling": null, "rate": 0.20}],
+      "mfs":     [{"floor": 0, "ceiling": 48350,  "rate": 0.00}, {"floor": 48350,  "ceiling": 300025, "rate": 0.15}, {"floor": 300025, "ceiling": null, "rate": 0.20}],
       "hoh":     [{"floor": 0, "ceiling": 64750,  "rate": 0.00}, {"floor": 64750,  "ceiling": 566700, "rate": 0.15}, {"floor": 566700, "ceiling": null, "rate": 0.20}]
     },
 
@@ -166,19 +167,19 @@
       "description": "Net Investment Income Tax 3.8% on investment income above MAGI thresholds. Thresholds are not indexed for inflation."
     },
 
-    "kiddie_tax_2025": {
-      "citation": "IRC §1(g); Rev. Proc. 2024-40 §3.05",
+    "kiddie_tax": {
+      "citation": "IRC §1(g); Rev. Proc. 2025-32 §3.05 (2026)",
       "unearned_income_exempt": 1350,
       "unearned_income_at_child_rate_ceiling": 2700,
       "unearned_income_at_parent_rate_floor": 2700,
-      "description": "First $1,350 of child unearned income is exempt (standard deduction for unearned income). Next $1,350 taxed at child's rate. Unearned income above $2,700 taxed at parent's marginal rate. Applies to children under 19 (or under 24 if full-time student) per §1(g)(2)."
+      "description": "First $1,350 of child unearned income is exempt; next $1,350 taxed at child's rate; unearned income above $2,700 taxed at parent's marginal rate. Applies to children under 19 (or under 24 if full-time student) per §1(g)(2)."
     },
 
-    "retirement_accounts_2025": {
+    "retirement_accounts": {
       "ira_contribution_limit": {
-        "value": 7000,
-        "citation": "IRC §219(b); Notice 2024-80",
-        "description": "Annual IRA contribution limit (under age 50) for 2025."
+        "value": 7500,
+        "citation": "IRC §219(b); IRS Notice 2025-67",
+        "description": "Annual IRA contribution limit (under age 50) for 2026. Catch-up contribution for age 50+ is an additional $1,100."
       },
       "ira_earned_income_requirement": {
         "citation": "IRC §219(b)(1)(A), §408A(c)(2)",
@@ -381,10 +382,10 @@
         "description": "Aggregate per-beneficiary contribution limit for NY 529 plans (combined across all NY 529 accounts for the same beneficiary)."
       },
       "estate_tax": {
-        "exemption": 7160000,
+        "exemption": 7350000,
         "cliff_threshold_multiplier": 1.05,
-        "citation": "NY Tax Law §§951, 952, 954, 955; NYSDTF Form ET-706",
-        "description": "$7.16M exemption (2025). If NY taxable estate exceeds 105% of the basic exclusion amount, the entire estate is taxed with NO exemption credit (the 'cliff').",
+        "citation": "NY Tax Law §§951, 952, 954, 955; NYSDTF Form ET-706 (2026 indexed BEA)",
+        "description": "$7.35M exemption (2026, NY DTF indexed value). If NY taxable estate exceeds 105% of the basic exclusion amount ($7.7175M for 2026), the entire estate is taxed with NO exemption credit (the 'cliff').",
         "three_year_gift_addback": {
           "citation": "NY Tax Law §954(a)(3)",
           "description": "Gifts made within three years of death are added back to the NY gross estate."

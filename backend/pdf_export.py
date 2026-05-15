@@ -152,7 +152,12 @@ def build_strategy_brief_pdf(
         story.append(Spacer(1, 0.15 * inch))
         story.append(Paragraph("Recommendations", h2))
         for rec in result.recommendations:
-            story.append(Paragraph(f"&bull; {rec}", body))
+            # Surface category and priority as a small leading tag — same
+            # information density as the dashboard cards.
+            tag = f"[{rec.category}]"
+            if rec.priority == "high":
+                tag = f"<b>{tag}</b>"
+            story.append(Paragraph(f"&bull; {tag} {rec.message}", body))
 
     warnings_consolidated = []
     for r in result.results:

@@ -41,7 +41,7 @@ def test_ny_below_exemption_zero_tax(rules, inputs_mfj_ny):
 
 
 def test_ny_cliff_triggered_above_105_pct(rules, inputs_mfj_ny):
-    """Above 1.05 × $7.16M = $7.518M, entire estate taxed without exemption."""
+    """Above 1.05 × $7.35M = $7,717,500 (2026), entire estate taxed without exemption."""
     regime = NYRegime(rules)
     res = regime.state_estate_tax(
         gross_estate=Decimal("8000000"),
@@ -60,19 +60,19 @@ def test_ny_cliff_triggered_above_105_pct(rules, inputs_mfj_ny):
 
 
 def test_ny_cliff_discontinuity(rules, inputs_mfj_ny):
-    """Compare just-under vs. just-over the cliff threshold."""
+    """Compare an estate at the 2026 NY BEA ($7.35M) vs. above the cliff threshold."""
     regime = NYRegime(rules)
-    just_under = regime.state_estate_tax(
-        Decimal("7160000"), Decimal("0"), Decimal("0"), Decimal("0"), inputs_mfj_ny
+    at_exemption = regime.state_estate_tax(
+        Decimal("7350000"), Decimal("0"), Decimal("0"), Decimal("0"), inputs_mfj_ny
     )
     way_over = regime.state_estate_tax(
         Decimal("8000000"), Decimal("0"), Decimal("0"), Decimal("0"), inputs_mfj_ny
     )
-    # An $840K marginal addition produces a far-greater-than-$840K tax delta,
+    # A $650K marginal addition produces a far-greater-than-$650K tax delta,
     # demonstrating the cliff is destructive of the exemption.
-    delta_tax = way_over.state_estate_tax - just_under.state_estate_tax
+    delta_tax = way_over.state_estate_tax - at_exemption.state_estate_tax
     assert delta_tax > Decimal("400000"), \
-        f"Cliff should produce massive marginal tax — got {delta_tax} on $840K of additional estate"
+        f"Cliff should produce massive marginal tax — got {delta_tax} on $650K of additional estate"
 
 
 def test_ny_income_tax_at_250k_mfj(rules, inputs_mfj_ny):

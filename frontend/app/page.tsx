@@ -103,7 +103,7 @@ export default function Page() {
           {result && (
             <button
               onClick={onPdf}
-              className="text-sm bg-ink text-white px-3 py-1.5 rounded hover:bg-slate-800"
+              className="text-sm bg-accent text-white px-3 py-1.5 rounded-md hover:bg-accent-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-ring focus-visible:ring-offset-2 transition-colors"
             >
               Download Strategy Brief (PDF)
             </button>

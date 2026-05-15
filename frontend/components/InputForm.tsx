@@ -363,7 +363,7 @@ export function InputForm({ initial, onSubmit, loading }: Props) {
               <button
                 type="button"
                 onClick={addAllocationRow}
-                className="text-blue-700 hover:underline"
+                className="text-accent hover:text-accent-hover hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-ring rounded"
               >
                 + Add vehicle
               </button>
@@ -474,7 +474,7 @@ export function InputForm({ initial, onSubmit, loading }: Props) {
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-ink text-white font-medium rounded py-2 hover:bg-slate-800 disabled:opacity-50"
+        className="w-full bg-accent text-white font-medium rounded-md py-2.5 hover:bg-accent-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         {loading ? "Computing…" : "Compare strategies"}
       </button>

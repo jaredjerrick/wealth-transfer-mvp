@@ -141,7 +141,7 @@ export const VEHICLES: VehicleInfo[] = [
     estateInclusion:
       "Fully includible under §§2031–2033. Estate tax applies above the §2010 unified credit, with state estate tax layered on for NY (cliff) and IL ($4M).",
     bestFor:
-      "Parents who want maximum flexibility and liquidity, and whose estate is well below the federal §2010 exclusion ($13.99M, 2025).",
+      "Parents who want maximum flexibility and liquidity, and whose estate is well below the federal §2010 exclusion ($15.0M, 2026).",
     watchouts:
       "On large estates, the federal + state estate tax bite can be material — the §1014 step-up is a powerful saving but only on the *income tax* side.",
   },
@@ -162,7 +162,7 @@ export const VEHICLES: VehicleInfo[] = [
     bestFor:
       "Parents whose donor-controlled assets are below the state and federal estate-tax thresholds, where the income-tax saving from the step-up dominates.",
     watchouts:
-      "If your estate is near or above the NY ($7.16M) or federal ($13.99M) thresholds, the estate-tax overhang can dwarf the income-tax saving.",
+      "If your estate is near or above the NY ($7.35M) or federal ($15.0M) thresholds (2026), the estate-tax overhang can dwarf the income-tax saving.",
   },
 ];
 

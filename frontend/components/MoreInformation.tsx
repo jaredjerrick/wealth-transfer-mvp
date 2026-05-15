@@ -138,7 +138,7 @@ function GRATTrustsPanel() {
           state estate tax or buy assets from the estate.
         </p>
         <p className="text-xs text-muted">
-          Best for: donors above NY ($7.16M) or federal ($13.99M) thresholds whose estate is
+          Best for: donors above NY ($7.35M) or federal ($15.0M) thresholds whose estate is
           illiquid (e.g., a closely-held business).
         </p>
       </section>
@@ -193,7 +193,7 @@ function GSTPanel() {
       </p>
       <p>
         The good news: every donor gets a GST exemption equal to the §2010 basic exclusion
-        ($13.99M for 2025). Allocate it to a dynasty trust at funding, and decades of
+        ($15.0M for 2026). Allocate it to a dynasty trust at funding, and decades of
         compounding inside the trust can pass through multiple generations entirely free of
         transfer tax.
       </p>

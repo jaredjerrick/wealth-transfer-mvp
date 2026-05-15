@@ -53,7 +53,7 @@ def test_low_net_worth_no_estate_tax(rules, state):
     # Pretax terminal at 7% gross drag-adjusted: should be > $580K, < $700K.
     assert Decimal("550000") < result.pretax_terminal_value < Decimal("750000"), \
         f"Pretax terminal ({result.pretax_terminal_value}) out of expected band for {state.value}."
-    # Federal estate tax must be zero — net worth + portfolio << $13.99M.
+    # Federal estate tax must be zero — net worth + portfolio << $15.0M (2026 BEA).
     assert result.taxes_paid_breakdown["estate"] == Decimal("0")
     # State estate tax must be zero in all three states at this level.
     assert result.taxes_paid_breakdown["state_estate"] == Decimal("0")
@@ -71,12 +71,12 @@ def test_mid_net_worth_il_above_4m_estate(rules):
 
     assert result.taxes_paid_breakdown["state_estate"] > Decimal("0"), \
         "IL estate tax must apply when total estate ($5M + portfolio) > $4M."
-    # Federal estate still zero — total well under $13.99M.
+    # Federal estate still zero — total well under $15.0M (2026 BEA).
     assert result.taxes_paid_breakdown["estate"] == Decimal("0")
 
 
-def test_mid_net_worth_ny_avoids_cliff_below_7_16m(rules):
-    """$5M NY donor stays under the $7.16M exemption. NY estate tax = 0."""
+def test_mid_net_worth_ny_avoids_cliff_below_7_35m(rules):
+    """$5M NY donor stays under the $7.35M exemption (2026). NY estate tax = 0."""
     inputs = _build(StateCode.NY, Decimal("5000000"), horizon=18)
     ctx = TaxContext(rules=rules, inputs=inputs)
     regime = regime_for(StateCode.NY, rules)
@@ -87,7 +87,7 @@ def test_mid_net_worth_ny_avoids_cliff_below_7_16m(rules):
 
 
 def test_high_net_worth_ny_cliff_triggered(rules):
-    """$25M NY donor — well above $7.16M × 1.05 cliff threshold.
+    """$25M NY donor — well above $7.35M × 1.05 cliff threshold (2026).
     Result must surface the cliff warning, and state estate share must be material."""
     inputs = _build(StateCode.NY, Decimal("25000000"), horizon=18)
     ctx = TaxContext(rules=rules, inputs=inputs)
@@ -100,8 +100,8 @@ def test_high_net_worth_ny_cliff_triggered(rules):
 
 
 def test_high_net_worth_federal_estate_tax_triggered(rules):
-    """$25M donor — over the $13.99M × 2 portable exclusion is borderline;
-    a single $25M donor (no spouse) certainly triggers federal estate tax."""
+    """$25M donor — under the $15M × 2 = $30M portable exclusion when married;
+    a single $25M donor (no spouse) is over the $15M single exclusion and certainly triggers federal estate tax."""
     inputs = DonorInputs(
         donor_age=45, donor_gross_income_agi=Decimal("250000"),
         filing_status=FilingStatus.SINGLE, state=StateCode.IL,
@@ -114,7 +114,7 @@ def test_high_net_worth_federal_estate_tax_triggered(rules):
     result = TaxableBrokerageStrategy().evaluate(ctx, regime, inputs)
 
     assert result.taxes_paid_breakdown["estate"] > Decimal("0"), \
-        "Federal estate tax must apply to $25M single donor over $13.99M exemption."
+        "Federal estate tax must apply to $25M single donor over $15.0M exemption (2026)."
 
 
 # ---------------------------------------------------------------------------
@@ -214,8 +214,14 @@ def test_compare_returns_seven_strategies(rules):
 
 
 def test_compare_recommendations_fire_appropriately(rules):
-    """High-net-worth NY donor must surface the NY cliff recommendation."""
+    """High-net-worth NY donor must surface the NY cliff recommendation as a
+    high-priority Estate-category structured Recommendation."""
     inputs = _build(StateCode.NY, Decimal("10000000"), horizon=15)
     result = compare_strategies(inputs, rules=rules)
-    joined = " ".join(result.recommendations)
-    assert "NY $7.16M" in joined or "NY" in joined
+    joined = " ".join(r.message for r in result.recommendations)
+    assert "NY $7.35M" in joined or "NY" in joined
+
+    estate_recs = [r for r in result.recommendations if r.category == "Estate"]
+    assert estate_recs, "Estate-category recommendation must fire for $10M NY donor"
+    assert all(r.priority == "high" for r in estate_recs), \
+        "Estate-tax exposure recommendations must be high priority"

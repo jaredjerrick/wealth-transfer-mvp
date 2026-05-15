@@ -54,7 +54,7 @@ def low_net_worth_inputs():
 
 @pytest.fixture
 def mid_net_worth_inputs():
-    """$5M — over IL $4M but under NY $7.16M, under federal $13.99M."""
+    """$5M — over IL $4M but under NY $7.35M (2026), under federal $15.0M (2026)."""
     def _build(state: StateCode = StateCode.IL) -> DonorInputs:
         return _make_inputs(state, Decimal("5000000"))
     return _build
@@ -62,7 +62,7 @@ def mid_net_worth_inputs():
 
 @pytest.fixture
 def high_net_worth_inputs():
-    """$25M — over federal $13.99M and over NY's cliff."""
+    """$25M — over federal $15.0M (2026) and over NY's $7.7175M cliff."""
     def _build(state: StateCode = StateCode.IL) -> DonorInputs:
         return _make_inputs(state, Decimal("25000000"))
     return _build

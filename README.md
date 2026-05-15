@@ -102,7 +102,7 @@ The frontend reads `NEXT_PUBLIC_API_BASE` (defaults to `http://localhost:8000`).
 ```
 backend/
 ├── rules/
-│   └── rules_2025.json           # Single source of truth — every number cited
+│   └── rules_2026.json           # Single source of truth — every number cited
 ├── engine/
 │   ├── tax_context.py            # Decimal-only federal resolver
 │   ├── inputs.py                 # Pydantic input schema with hard blocks
@@ -138,7 +138,7 @@ frontend/
 ### Determinism + audit trail
 
 - All monetary math is `decimal.Decimal`. No `float`.
-- Every parameter — exclusion amounts, bracket thresholds, deduction caps — lives in `rules_2025.json` with an IRC/Treasury reg/state-statute citation. The Python engine never hardcodes a number.
+- Every parameter — exclusion amounts, bracket thresholds, deduction caps — lives in `rules_2026.json` with an IRC/Treasury reg/state-statute citation. The Python engine never hardcodes a number.
 - Every `StrategyResult` carries a `citations: Citation[]` payload rendered as superscript footnotes in the UI.
 
 ### Acceptance criteria (status)

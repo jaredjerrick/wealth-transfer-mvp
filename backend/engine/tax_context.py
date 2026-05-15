@@ -46,7 +46,7 @@ def round_cents(amount: Decimal) -> Decimal:
 # Rules loader
 # ---------------------------------------------------------------------------
 
-DEFAULT_RULES_PATH = Path(__file__).resolve().parent.parent / "rules" / "rules_2025.json"
+DEFAULT_RULES_PATH = Path(__file__).resolve().parent.parent / "rules" / "rules_2026.json"
 
 
 def load_rules(path: Optional[Path] = None) -> dict:
@@ -155,15 +155,15 @@ class TaxContext:
 
     @property
     def kiddie_tax_floor(self) -> Decimal:
-        return D(self.federal["kiddie_tax_2025"]["unearned_income_at_parent_rate_floor"])
+        return D(self.federal["kiddie_tax"]["unearned_income_at_parent_rate_floor"])
 
     @property
     def kiddie_tax_exempt(self) -> Decimal:
-        return D(self.federal["kiddie_tax_2025"]["unearned_income_exempt"])
+        return D(self.federal["kiddie_tax"]["unearned_income_exempt"])
 
     @property
     def ira_limit(self) -> Decimal:
-        return D(self.federal["retirement_accounts_2025"]["ira_contribution_limit"]["value"])
+        return D(self.federal["retirement_accounts"]["ira_contribution_limit"]["value"])
 
     @property
     def filing_status_key(self) -> str:
@@ -172,15 +172,15 @@ class TaxContext:
     # ----- federal income tax -----
 
     def federal_ordinary_tax(self, taxable: Decimal) -> Decimal:
-        brackets = self.federal["income_tax_2025_ordinary"][self.filing_status_key]
+        brackets = self.federal["income_tax_ordinary"][self.filing_status_key]
         return progressive_tax(taxable, brackets)
 
     def federal_ordinary_marginal_rate(self, agi: Decimal) -> Decimal:
-        brackets = self.federal["income_tax_2025_ordinary"][self.filing_status_key]
+        brackets = self.federal["income_tax_ordinary"][self.filing_status_key]
         return flat_bracket_rate(agi, brackets)
 
     def federal_ltcg_rate(self, agi: Decimal) -> Decimal:
-        brackets = self.federal["capital_gains_2025_long_term"][self.filing_status_key]
+        brackets = self.federal["capital_gains_long_term"][self.filing_status_key]
         return flat_bracket_rate(agi, brackets)
 
     def niit_rate_applies(self, agi: Decimal) -> Decimal:
@@ -265,9 +265,10 @@ class TaxContext:
         """IRC §1(g) kiddie tax. Returns (tax_due, citations).
 
         Applies if child is under 19, or under 24 and a full-time student.
-        - First $1,350 (2025) is exempt (standard deduction for unearned).
+        - First $1,350 is exempt (standard deduction for unearned income).
         - Next $1,350 taxed at child's rate (treated as 10% for simplicity at this scale).
         - Unearned income > $2,700 taxed at parent's marginal rate.
+        Threshold values are sourced from the loaded rules file (currently 2026).
         """
         cites = [CITATIONS["kiddie_tax"]]
         if child_unearned_income <= ZERO:
@@ -277,7 +278,7 @@ class TaxContext:
         if not applies:
             # Child filing as adult — taxed at single bracket.
             # We approximate with the child having no other income.
-            single_brackets = self.federal["income_tax_2025_ordinary"]["single"]
+            single_brackets = self.federal["income_tax_ordinary"]["single"]
             return progressive_tax(child_unearned_income, single_brackets), cites
 
         exempt = self.kiddie_tax_exempt

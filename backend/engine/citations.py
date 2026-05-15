@@ -42,7 +42,7 @@ CITATIONS = {
     # ---- Gift tax ----
     "annual_exclusion": Citation(
         section="IRC §2503(b)",
-        description="Annual gift tax exclusion ($19,000 per donee for 2025).",
+        description="Annual gift tax exclusion ($19,000 per donee for 2026).",
         url="https://www.law.cornell.edu/uscode/text/26/2503",
     ),
     "gift_splitting": Citation(
@@ -62,7 +62,7 @@ CITATIONS = {
     ),
     "lifetime_exemption": Citation(
         section="IRC §2010(c)",
-        description="Basic exclusion amount applicable to estate and gift tax ($13.99M, 2025).",
+        description="Basic exclusion amount applicable to estate and gift tax ($15.0M, 2026; $30.0M combined with §2010(c)(2)(B) DSUE portability).",
         url="https://www.law.cornell.edu/uscode/text/26/2010",
     ),
     "completed_gift": Citation(
@@ -129,7 +129,7 @@ CITATIONS = {
     # ---- GST tax ----
     "gst_exemption": Citation(
         section="IRC §2631",
-        description="GST exemption allocation ($13.99M, 2025).",
+        description="GST exemption allocation ($15.0M, 2026).",
         url="https://www.law.cornell.edu/uscode/text/26/2631",
     ),
     "skip_person": Citation(
@@ -144,9 +144,9 @@ CITATIONS = {
     ),
     # ---- Income tax mechanics ----
     "ordinary_rates": Citation(
-        section="IRC §1; Rev. Proc. 2024-40",
-        description="Ordinary income tax brackets for 2025.",
-        url="https://www.irs.gov/pub/irs-drop/rp-24-40.pdf",
+        section="IRC §1; Rev. Proc. 2025-32",
+        description="Ordinary income tax brackets for 2026.",
+        url="https://www.irs.gov/pub/irs-drop/rp-25-32.pdf",
     ),
     "capital_gains_rates": Citation(
         section="IRC §1(h)",

@@ -1,7 +1,7 @@
 """New York state regime.
 
 The defining quirk: NY estate tax has a 'cliff' at 105% of the basic exclusion
-amount. If the NY taxable estate exceeds 1.05 × $7.16M = $7.518M (2025),
+amount. If the NY taxable estate exceeds 1.05 × $7.35M = $7.7175M (2026),
 the entire estate is taxed at the §952 rate schedule with NO exemption credit.
 The MVP models this discontinuity explicitly because it is the single largest
 state-tax planning trap for affluent New York families.
