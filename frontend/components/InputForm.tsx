@@ -123,14 +123,9 @@ export function InputForm({ initial, onSubmit, loading }: Props) {
   }
 
   return (
-    // overflow-hidden defensively clips anything escaping the form's box; the
-    // grid-row `min-w-0` further down ensures the inner allocation grid can
-    // shrink to fit. Together with the page-level grid's `min-w-0`, this
-    // prevents the form column from visually invading the results column on
-    // narrow desktop viewports.
     <form
       onSubmit={submit}
-      className="bg-white border border-slate-200 rounded-lg p-6 space-y-5 overflow-hidden break-words"
+      className="bg-white border border-slate-200 rounded-lg p-6 space-y-5"
     >
       <h2 className="text-lg font-semibold text-ink">Planning inputs</h2>
 

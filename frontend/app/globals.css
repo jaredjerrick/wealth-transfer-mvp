@@ -7,6 +7,15 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Browser default for fieldset is `min-width: min-content`, which makes
+ * fieldsets refuse to shrink below their content's intrinsic minimum width.
+ * That breaks CSS Grid `minmax(0, 1fr)` and similar shrink-to-fit patterns
+ * inside the fieldset — see the InputForm allocation grid. Reset to 0 so
+ * fieldsets respect their parent's width like every other block element. */
+fieldset {
+  min-width: 0;
+}
+
 .citation-link {
   @apply text-blue-700 hover:underline cursor-help;
 }
