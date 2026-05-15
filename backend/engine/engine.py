@@ -34,6 +34,10 @@ CATEGORY_STEP_UP = "Step-up"
 CATEGORY_GST = "GST"
 CATEGORY_GIFTING = "Gifting"
 CATEGORY_PLANNING = "Planning"
+# "Model note" is distinct from planning recommendations: it tells the user
+# what the tool can or cannot represent, rather than what they should do.
+# Used for limitations like the single-representative-child assumption.
+CATEGORY_MODEL_NOTE = "Model note"
 
 CATEGORIES = (
     CATEGORY_ESTATE,
@@ -45,6 +49,7 @@ CATEGORIES = (
     CATEGORY_GST,
     CATEGORY_GIFTING,
     CATEGORY_PLANNING,
+    CATEGORY_MODEL_NOTE,
 )
 
 PRIORITY_HIGH = "high"
@@ -261,6 +266,26 @@ def _build_recommendations(
                 ),
                 category=CATEGORY_GIFTING,
                 priority=PRIORITY_NORMAL,
+            )
+        )
+
+        # ---- Model note: the engine simulates a single representative child. ----
+        # The strategies below use a single age, earned-income figure, and life-
+        # event timeline — there is no per-child differentiation in the math.
+        # For families whose children have materially different ages, the
+        # optimal vehicle mix can diverge (a 4-year-old has 14 years of 529
+        # runway; a 16-year-old has 2). Surface the limitation explicitly.
+        recs.append(
+            Recommendation(
+                message=(
+                    f"Modeling assumption: with {inputs.num_children} children, the engine simulates "
+                    f"a single representative child of age {inputs.child_age}. For families whose "
+                    f"children have materially different ages (e.g., 4 and 16), the optimal vehicle "
+                    f"mix can differ significantly — consider running the tool once per child and "
+                    f"summing the results."
+                ),
+                category=CATEGORY_MODEL_NOTE,
+                priority=PRIORITY_LOW,
             )
         )
 

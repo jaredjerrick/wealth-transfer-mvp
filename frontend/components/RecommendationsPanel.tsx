@@ -31,6 +31,10 @@ const CATEGORY_STYLE: Record<
   GST: { border: "#ec4899", chip: "text-pink-700" }, // pink 500
   Gifting: { border: "#f59e0b", chip: "text-amber-700" }, // amber 500
   Planning: { border: "#64748b", chip: "text-slate-600" }, // slate 500
+  // Model notes are tool-introspection (what the engine can/can't represent),
+  // not user-facing advice. Use a softer slate tint so they don't compete
+  // visually with actionable items.
+  "Model note": { border: "#94a3b8", chip: "text-slate-500" }, // slate 400/500
 };
 
 export function RecommendationsPanel({ data }: Props) {

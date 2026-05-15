@@ -106,7 +106,8 @@ export type RecommendationCategory =
   | "Step-up"
   | "GST"
   | "Gifting"
-  | "Planning";
+  | "Planning"
+  | "Model note";
 
 export type RecommendationPriority = "high" | "normal" | "low";
 

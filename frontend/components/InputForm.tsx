@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type {
   AllocationItem,
   DonorInputsPayload,
@@ -68,23 +68,31 @@ export function InputForm({ initial, onSubmit, loading }: Props) {
 
   function applyPreset(id: string) {
     setPresetId(id);
-    const preset = PRESETS.find((p) => p.id === id);
-    if (!preset) return;
-    const annual = parseFloat(v.annual_contribution || "0");
-    if (preset.id === "custom") {
-      // Keep current allocation but make sure each vehicle is present.
-      if (allocation.length === 0) {
-        setAllocation([{ vehicle: "section_529", annual_amount: "0" }]);
-      }
-      return;
+    // The rebalance effect below handles re-deriving the allocation rows for
+    // non-custom presets from {presetId, annual_contribution}. We only need
+    // special handling here for "custom": seed an empty allocation with a
+    // starter row so the user has something to edit from.
+    if (id === "custom" && allocation.length === 0) {
+      setAllocation([{ vehicle: "section_529", annual_amount: "0" }]);
     }
+  }
+
+  // Live rebalance: whenever the annual contribution changes (or the user
+  // picks a different non-custom preset), redistribute the per-vehicle
+  // dollars according to the preset weights. "Custom" is intentionally
+  // excluded so manual edits aren't clobbered.
+  useEffect(() => {
+    if (presetId === "custom") return;
+    const preset = PRESETS.find((p) => p.id === presetId);
+    if (!preset || preset.weights.length === 0) return;
+    const annual = parseFloat(v.annual_contribution || "0");
     setAllocation(
       preset.weights.map((w) => ({
         vehicle: w.vehicle,
         annual_amount: (annual * w.weight).toFixed(0),
       }))
     );
-  }
+  }, [v.annual_contribution, presetId]);
 
   function updateAllocationRow(i: number, patch: Partial<AllocationItem>) {
     setAllocation((rows) => rows.map((r, idx) => (idx === i ? { ...r, ...patch } : r)));
